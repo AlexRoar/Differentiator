@@ -6,12 +6,41 @@
 #define DIFFERENTIATOR_BINARYTREE_H
 
 #include <cstdlib>
+#include "ExprNode.h"
 
 template<typename Elem>
 class BinaryTree {
     Elem        value;
     BinaryTree* left;
     BinaryTree* right;
+
+    void dumpRecursive(FILE* output) const{
+        fprintf(output, "node%p[label=\"", this);
+        switch (value.getType()) {
+            case TP_CST: {
+                fprintf(output, "%lg", value.getConst());
+                break;
+            }
+            case  TP_OPR: {
+                fprintf(output, "%s", value.getOperator().toString());
+                break;
+            }
+            case  TP_VAR: {
+                fprintf(output, "%c", value.getVar());
+                break;
+            }
+        }
+        fprintf(output,"\"]\n");
+        if (left){
+            fprintf(output, "node%p->node%p\n", this, left);
+            left->dumpRecursive(output);
+        }
+        if (right){
+            fprintf(output, "node%p->node%p\n", this, right);
+            right->dumpRecursive(output);
+        }
+    }
+
 public:
     static BinaryTree* New() {
         auto* thou  = static_cast<BinaryTree*>(calloc(1, sizeof(BinaryTree)));
@@ -69,6 +98,16 @@ public:
         BinaryTree* newCopy = New();
         newCopy->cTor(value, left? left->deepCopy(): nullptr, right? right->deepCopy(): nullptr);
         return newCopy;
+    }
+
+    void dumpGraph() const {
+        FILE* tmpGr = fopen("graph.gv", "w");
+        fprintf(tmpGr, "digraph expr{\n");
+        this->dumpRecursive(tmpGr);
+        fprintf(tmpGr, "}\n");
+        fclose(tmpGr);
+
+        system("dot -Tsvg graph.gv -o graph.svg");
     }
 };
 

@@ -3,10 +3,9 @@
 #include "ExprNode.h"
 
 int main() {
-    InfixParser parser{};
-    parser.cTor();
+    auto* graph = InfixParser::parseExpression("10 * (20 + sin(60 + tan(x + 5))) / 79");
 
-   ClassicStack<ExprNode> tokens = parser.tokenize("1 + 2 * sin(3 + 6)");
+    graph->dumpGraph();
 
     return 0;
 }

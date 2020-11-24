@@ -49,6 +49,8 @@ public:
     }
 
     Elem pop(){
+        if (size == 0)
+            return Elem();
         return this->data[--size];
     }
 

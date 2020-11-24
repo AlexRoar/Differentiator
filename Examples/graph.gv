@@ -1,0 +1,27 @@
+digraph expr{
+node0x7fa3d3f04620[label="/"]
+node0x7fa3d3f04620->node0x7fa3d3f045a0
+node0x7fa3d3f045a0[label="*"]
+node0x7fa3d3f045a0->node0x7fa3d3f04100
+node0x7fa3d3f04100[label="10"]
+node0x7fa3d3f045a0->node0x7fa3d3f04560
+node0x7fa3d3f04560[label="+"]
+node0x7fa3d3f04560->node0x7fa3d3f04140
+node0x7fa3d3f04140[label="20"]
+node0x7fa3d3f04560->node0x7fa3d3f04520
+node0x7fa3d3f04520[label="sin"]
+node0x7fa3d3f04520->node0x7fa3d3f044e0
+node0x7fa3d3f044e0[label="+"]
+node0x7fa3d3f044e0->node0x7fa3d3f04180
+node0x7fa3d3f04180[label="60"]
+node0x7fa3d3f044e0->node0x7fa3d3f044a0
+node0x7fa3d3f044a0[label="tan"]
+node0x7fa3d3f044a0->node0x7fa3d3f04460
+node0x7fa3d3f04460[label="+"]
+node0x7fa3d3f04460->node0x7fa3d3f041c0
+node0x7fa3d3f041c0[label="x"]
+node0x7fa3d3f04460->node0x7fa3d3f04420
+node0x7fa3d3f04420[label="5"]
+node0x7fa3d3f04620->node0x7fa3d3f045e0
+node0x7fa3d3f045e0[label="79"]
+}

@@ -28,6 +28,11 @@ enum ExprOperatorCode {
     OP_RPA  = 1200 + ')',
 };
 
+enum ExprOperatorType {
+    OP_T_OPER = 100,
+    OP_T_FUNC = 200
+};
+
 enum ExprAssociativity {
     ASSOC_LEFT  = -10,
     ASSOC_RIGHT =  10,
@@ -37,6 +42,7 @@ enum ExprAssociativity {
 class ExprOperator {
     ExprOperatorCode   code;
     ExprAssociativity  assoc;
+    ExprOperatorType   opType;
     unsigned           precedence;
     unsigned           argsCount;
 public:
@@ -61,6 +67,7 @@ public:
                 assoc      = ASSOC_LEFT;
                 precedence = 2;
                 argsCount = 2;
+                opType    = OP_T_OPER;
                 break;
             }
             case OP_MUL:
@@ -68,12 +75,14 @@ public:
                 assoc      = ASSOC_LEFT;
                 precedence = 3;
                 argsCount = 2;
+                opType    = OP_T_OPER;
                 break;
             }
             case OP_EXP: {
                 assoc      = ASSOC_RIGHT;
                 precedence = 4;
                 argsCount = 2;
+                opType    = OP_T_OPER;
                 break;
             }
             case OP_SIN:
@@ -84,12 +93,14 @@ public:
                 assoc      = ASSOC_NONE;
                 precedence = 5;
                 argsCount  = 1;
+                opType     = OP_T_FUNC;
                 break;
             }
             case OP_RPA:
             case OP_LPA:{
                 assoc      = ASSOC_NONE;
                 precedence = 6;
+                opType    = OP_T_OPER;
                 break;
             }
         }
@@ -114,15 +125,48 @@ public:
         return precedence;
     }
 
-    bool operator<(ExprOperator& other) const {
+    [[nodiscard]] unsigned getArgsCount() const{
+        return argsCount;
+    }
+
+    [[nodiscard]] ExprOperatorType getOpType() const{
+        return opType;
+    }
+
+    const char* toString() {
+        switch (code) {
+            case OP_SUB: return "-";
+            case OP_ADD: return "+";
+            case OP_MUL: return "*";
+            case OP_DIV: return "/";
+            case OP_EXP: return "^";
+            case OP_SIN: return "sin";
+            case OP_COS: return "cos";
+            case OP_TAN: return "tan";
+            case OP_CTG: return "ctg";
+            case OP_LOG: return "log";
+            case OP_RPA: return "(";
+            case OP_LPA: return ")";
+        }
+    }
+
+    bool operator<(const ExprOperator& other) const {
         return precedence < other.precedence;
     }
 
-    bool operator>(ExprOperator& other) const {
+    bool operator<=(const ExprOperator& other) const {
+        return precedence <= other.precedence;
+    }
+
+    bool operator>(const ExprOperator& other) const {
         return precedence > other.precedence;
     }
 
-    bool operator==(ExprOperator& other) const {
+    bool operator>=(const ExprOperator& other) const {
+        return precedence >= other.precedence;
+    }
+
+    bool operator==(const ExprOperator& other) const {
         return code == other.code;
     }
 };
