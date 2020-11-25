@@ -1,11 +1,20 @@
-#include "InfixParser.h"
-#include "BinaryTree.h"
-#include "ExprNode.h"
+#include "Helpers/InfixParser.h"
+#include "Derivation/Differentiator.h"
 
 int main() {
-    auto* graph = InfixParser::parseExpression("10 * (20 + sin(60 + tan(x + 5))) / 79");
+    auto* graph = InfixParser::parseExpression("1 + x * 6 + 10 * x");
 
-    graph->dumpGraph();
+    Differentiator differentiator{};
+    differentiator.cTor(graph);
+
+    auto* derived = differentiator.derivative('x');
+    derived->dumpGraph();
+
+    ExprOptimizer optimizer{};
+    optimizer.cTor(derived);
+
+    optimizer.simplify(false);
+    optimizer.getStructure()->dumpGraph();
 
     return 0;
 }

@@ -14,45 +14,49 @@
 #include "ExprNode.h"
 #include "Stack.h"
 
+#define SIMPLE_OP(OP) (input++, retValue.cTor(OP), retValue)
+#define SIMPLE_FUNC(FUNC, OP) if (strstr(input, #FUNC) == input)                                       \
+                                   return (input += sizeof(#FUNC) - 1, retValue.cTor(OP), retValue)
+
 class InfixParser {
     ClassicStack<ExprNode> stack;
-
     static ExprNode fetchToken(char *&input) {
         ExprNode retValue {};
         while ((*input == ' ' || *input == '\n') && *input != '\0') { input++; }
         if (*input == '\0')
             return retValue;
         switch (*input) {
-            case '/':
-                return (input++, retValue.cTor(OP_DIV), retValue);
-            case '*':
-                return (input++, retValue.cTor(OP_MUL), retValue);
-            case '+':
-                return (input++, retValue.cTor(OP_ADD), retValue);
-            case '-':
-                return (input++, retValue.cTor(OP_SUB), retValue);
-            case '^':
-                return (input++, retValue.cTor(OP_EXP), retValue);
-            case '(':
-                return (input++, retValue.cTor(OP_LPA), retValue);
-            case ')':
-                return (input++, retValue.cTor(OP_RPA), retValue);
+            case '/': return SIMPLE_OP(OP_DIV);
+            case '*': return SIMPLE_OP(OP_MUL);
+            case '+': return SIMPLE_OP(OP_ADD);
+            case '^': return SIMPLE_OP(OP_EXP);
+            case '(': return SIMPLE_OP(OP_LPA);
+            case ')': return SIMPLE_OP(OP_RPA);
+            case '-': {
+                int offset = 0;
+                double constant = 0;
+                if (sscanf(input, "%lg%n", &constant, &offset) > 0) {
+                    input += offset;
+                    return (retValue.cTor(constant), retValue);
+                }
+                return SIMPLE_OP(OP_SUB);
+            }
             default: {
                 int offset = 0;
                 double constant = 0;
                 if (sscanf(input, "%lg%n", &constant, &offset) > 0) {
                     input += offset;
                     return (retValue.cTor(constant), retValue);
-                } else if (strstr(input, "sin") == input)
-                    return (input += 3, retValue.cTor(OP_SIN), retValue);
-                else if (strstr(input, "cos") == input)
-                    return (input += 3, retValue.cTor(OP_COS), retValue);
-                else if (strstr(input, "ctg") == input)
-                    return (input += 3, retValue.cTor(OP_CTG), retValue);
-                else if (strstr(input, "log") == input)
-                    return (input += 3, retValue.cTor(OP_LOG), retValue);
-                else if (strstr(input, "tan") == input)
-                    return (input += 3, retValue.cTor(OP_TAN), retValue);
+                }
+                else SIMPLE_FUNC(sin,    OP_SIN );
+                else SIMPLE_FUNC(cos,    OP_COS );
+                else SIMPLE_FUNC(ctg,    OP_CTG );
+                else SIMPLE_FUNC(log,    OP_LOG );
+                else SIMPLE_FUNC(tan,    OP_TAN );
+                else SIMPLE_FUNC(arctan, OP_ATAN);
+                else SIMPLE_FUNC(arccot, OP_ACTG);
+                else SIMPLE_FUNC(arcsin, OP_ASIN);
+                else SIMPLE_FUNC(arccos, OP_ACOS);
                 return (retValue.cTor(*input), input += 1, retValue);
             }
         }
@@ -133,6 +137,9 @@ public:
 
         while (operatorStack.getSize() != 0) {
             ExprNode popped = operatorStack.pop();
+            if (popped.getType() == TP_OPR && (popped.getOperator().getCode() == OP_LPA ||
+                                                popped.getOperator().getCode() == OP_RPA))
+                return nullptr;
             outputList.pushBack(popped);
         }
         operatorStack.dTor();
@@ -157,7 +164,7 @@ public:
             }
             converter.push(newNode);
         }
-        
+
         BinaryTree<ExprNode>* root = converter.pop();
         converter.dTor();
         return root;

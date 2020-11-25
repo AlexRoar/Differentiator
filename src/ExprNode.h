@@ -26,6 +26,10 @@ enum ExprOperatorCode {
     OP_LOG  = 1000 + 'l',
     OP_LPA  = 1100 + '(',
     OP_RPA  = 1200 + ')',
+    OP_ATAN = 1300 + 't',
+    OP_ACOS = 1400 + 'c',
+    OP_ASIN = 1500 + 's',
+    OP_ACTG = 1600 + 'c',
 };
 
 enum ExprOperatorType {
@@ -66,29 +70,33 @@ public:
             case OP_ADD: {
                 assoc      = ASSOC_LEFT;
                 precedence = 2;
-                argsCount = 2;
-                opType    = OP_T_OPER;
+                argsCount  = 2;
+                opType     = OP_T_OPER;
                 break;
             }
             case OP_MUL:
             case OP_DIV: {
                 assoc      = ASSOC_LEFT;
                 precedence = 3;
-                argsCount = 2;
-                opType    = OP_T_OPER;
+                argsCount  = 2;
+                opType     = OP_T_OPER;
                 break;
             }
             case OP_EXP: {
                 assoc      = ASSOC_RIGHT;
                 precedence = 4;
-                argsCount = 2;
-                opType    = OP_T_OPER;
+                argsCount  = 2;
+                opType     = OP_T_OPER;
                 break;
             }
             case OP_SIN:
             case OP_COS:
             case OP_TAN:
             case OP_CTG:
+            case OP_ATAN:
+            case OP_ACOS:
+            case OP_ASIN:
+            case OP_ACTG:
             case OP_LOG: {
                 assoc      = ASSOC_NONE;
                 precedence = 5;
@@ -100,7 +108,7 @@ public:
             case OP_LPA:{
                 assoc      = ASSOC_NONE;
                 precedence = 6;
-                opType    = OP_T_OPER;
+                opType     = OP_T_OPER;
                 break;
             }
         }
@@ -135,18 +143,22 @@ public:
 
     const char* toString() {
         switch (code) {
-            case OP_SUB: return "-";
-            case OP_ADD: return "+";
-            case OP_MUL: return "*";
-            case OP_DIV: return "/";
-            case OP_EXP: return "^";
-            case OP_SIN: return "sin";
-            case OP_COS: return "cos";
-            case OP_TAN: return "tan";
-            case OP_CTG: return "ctg";
-            case OP_LOG: return "log";
-            case OP_RPA: return "(";
-            case OP_LPA: return ")";
+            case OP_SUB:  return "-";
+            case OP_ADD:  return "+";
+            case OP_MUL:  return "*";
+            case OP_DIV:  return "/";
+            case OP_EXP:  return "^";
+            case OP_SIN:  return "sin";
+            case OP_COS:  return "cos";
+            case OP_TAN:  return "tan";
+            case OP_CTG:  return "ctg";
+            case OP_LOG:  return "log";
+            case OP_RPA:  return "(";
+            case OP_LPA:  return ")";
+            case OP_ATAN: return "arctan";
+            case OP_ACOS: return "arccos";
+            case OP_ASIN: return "arcsin";
+            case OP_ACTG: return "arccot";
         }
     }
 
@@ -172,10 +184,12 @@ public:
 };
 
 class ExprNode {
-    char            variable;
-    double          value;
+    union {
+        char            variable;
+        double          value;
+        ExprOperator    op;
+    };
     ExprType        type;
-    ExprOperator    op;
 
 public:
     static ExprNode* New() {

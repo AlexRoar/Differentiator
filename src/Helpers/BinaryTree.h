@@ -70,6 +70,8 @@ public:
     }
 
     static void Delete(BinaryTree* obj) {
+        if (!obj)
+            return;
         obj->dTor();
         free(obj);
     }
@@ -78,12 +80,20 @@ public:
         return value;
     }
 
-    BinaryTree* getLeft() const{
+    BinaryTree* getLeft() const {
         return left;
     }
 
-    BinaryTree* getRight() const{
+    BinaryTree* getRight() const {
         return right;
+    }
+
+    BinaryTree*& getRight() {
+        return right;
+    }
+
+    BinaryTree*& getLeft() {
+        return left;
     }
 
     BinaryTree* copy() const{
