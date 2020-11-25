@@ -8,6 +8,7 @@
 #include "Helpers/BinaryTree.h"
 #include "ExprNode.h"
 #include "Evaluation/Evaluator.h"
+#include "Optimization/SpecificOptimizers.h"
 
 #define EVAL_L Evaluator::eval(head->getLeft(), evalMath)
 #define EVAL_R Evaluator::eval(head->getRight(), evalMath)
@@ -61,65 +62,20 @@ class ExprOptimizer {
         EvaluatorRes evalR = EVAL_R;
         EvaluatorRes evalL = EVAL_L;
         switch (head->getVal().getOperator().getCode()) {
-            case OP_SUB: {
-                if (EXPECT_EVAL_R_EQ(0)) {
-                    BinaryTree<ExprNode>::Delete(head->getRight());
-                    head = head->getLeft();
-                    changed += 1;
-                }
+            case OP_SUB:
+                changed += SpecificOptimizers::subOptimizer(head, evalL, evalR, evalMath);
                 break;
-            }
-            case OP_ADD: {
-                if (EXPECT_EVAL_R_EQ(0)) {
-                    BinaryTree<ExprNode>::Delete(head->getRight());
-                    head = head->getLeft();
-                    changed += 1;
-                } else if (EXPECT_EVAL_L_EQ(0)) {
-                    BinaryTree<ExprNode>::Delete(head->getLeft());
-                    head = head->getRight();
-                    changed += 1;
-                }
+            case OP_ADD:
+                changed += SpecificOptimizers::addOptimizer(head, evalL, evalR, evalMath);
                 break;
-            }
             case OP_DIV:
-                if (EXPECT_EVAL_R_EQ(1)) {
-                    BinaryTree<ExprNode>::Delete(head->getRight());
-                    head = head->getLeft();
-                    changed += 1;
-                }
+                changed += SpecificOptimizers::divOptimizer(head, evalL, evalR, evalMath);
                 break;
-            case OP_MUL: {
-                if (EXPECT_EVAL_R_EQ(1)) {
-                    BinaryTree<ExprNode>::Delete(head->getRight());
-                    head = head->getLeft();
-                    changed += 1;
-                } else if (EXPECT_EVAL_L_EQ(1)) {
-                    BinaryTree<ExprNode>::Delete(head->getLeft());
-                    head = head->getRight();
-                    changed += 1;
-                } else if ( EXPECT_EVAL_R_EQ(0) || EXPECT_EVAL_L_EQ(0)) {
-                    ExprNode newVal {};
-                    newVal.cTor(0.0);
-                    BinaryTree<ExprNode>::Delete(head->getLeft());
-                    BinaryTree<ExprNode>::Delete(head->getRight());
-                    head->cTor(newVal);
-                    changed += 1;
-                }
+            case OP_MUL:
+                changed += SpecificOptimizers::mulOptimizer(head, evalL, evalR, evalMath);
                 break;
-            }
             case OP_EXP: {
-                if (EXPECT_EVAL_R_EQ(1)) {
-                    BinaryTree<ExprNode>::Delete(head->getRight());
-                    head = head->getLeft();
-                    changed += 1;
-                } else if (EXPECT_EVAL_R_EQ(0)) {
-                    ExprNode newVal {};
-                    newVal.cTor(1.0);
-                    BinaryTree<ExprNode>::Delete(head->getLeft());
-                    BinaryTree<ExprNode>::Delete(head->getRight());
-                    head->cTor(newVal);
-                    changed += 1;
-                }
+                changed += SpecificOptimizers::expOptimizer(head, evalL, evalR, evalMath);
                 break;
             }
             case OP_SIN:

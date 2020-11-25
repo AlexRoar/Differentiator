@@ -16,9 +16,9 @@
 #define SUB(L, R) sub(L, R)
 #define DIV(L, R) div(L, R)
 #define POW(L, R) pow(L, R)
-#define LOG(L) log(L)
-#define SIN(L) sin(L)
-#define COS(L) cos(L)
+#define LOG(L)    log(L)
+#define SIN(L)    sin(L)
+#define COS(L)    cos(L)
 
 #define DOUBLE_NODE(VAL) {                      \
     auto* newNode = BinaryTree<ExprNode>::New();\

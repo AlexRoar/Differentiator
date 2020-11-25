@@ -14,28 +14,8 @@
 #include "Evaluation/Evaluator.h"
 #include "Optimization/ExprOptimizer.h"
 
-class Differentiator {
-    BinaryTree<ExprNode>* structure;
-public:
-    static Differentiator* New() {
-        auto* thou  = static_cast<Differentiator*>(calloc(1, sizeof(Differentiator)));
-        thou->structure  = nullptr;
-        return thou;
-    }
-
-    void cTor(BinaryTree<ExprNode>* newStructure) {
-        this->structure = newStructure;
-    }
-
-    void dTor(){
-    }
-
-    static void Delete(Differentiator* obj) {
-        obj->dTor();
-        free(obj);
-    }
-
-    BinaryTree<ExprNode>* derivative(char var){
+namespace Differentiator {
+    static BinaryTree<ExprNode>* derivative(BinaryTree<ExprNode>* structure, char var){
         return DerivativeRule::derivative(structure, var);
     }
 };

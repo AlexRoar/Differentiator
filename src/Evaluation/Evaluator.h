@@ -17,20 +17,30 @@
 #define EVAL_L eval(head->getLeft(), evalMath)
 #define EVAL_R eval(head->getRight(), evalMath)
 
-class Evaluator {
-    BinaryTree<ExprNode>* structure;
-public:
-    static EvaluatorRes eval(BinaryTree<ExprNode>* head, bool evalMath=false, bool evalVar=false, const double* vars= nullptr){
+#define CONV_MATH(expr) (floor(expr) == expr || evalMath)? \
+                                    EvaluatorRes {EV_OK, expr} :            \
+                                    EvaluatorRes {EV_MATH_TOK, 0}
+
+namespace Evaluator {
+    static EvaluatorRes funcProcess(double calc, bool evalMath) {
+        if (floor(calc) == calc || evalMath)
+            return EvaluatorRes {EV_OK, calc};
+        return EvaluatorRes {EV_MATH_TOK, 0};
+    }
+
+    static EvaluatorRes eval(BinaryTree<ExprNode>* head, bool evalMath=false, bool evalVar=false, const double* vars= nullptr) {
         if (!head)
             return EvaluatorRes {EV_ERR, 0};
-        if (head->getVal().getType() == TP_VAR)
-            return EvaluatorRes{EV_VAR_NEEDED, 0};
-        else if (head->getVal().getType() == TP_CST)
-            return EvaluatorRes{EV_OK, head->getVal().getConst()};
+        if (head->getVal().getType() == TP_VAR) {
+            if (evalVar) {
+                return EvaluatorRes {EV_OK, vars[head->getVal().getVar() - 'a']};
+            }
+            return EvaluatorRes {EV_VAR_NEEDED, 0};
+        } else if (head->getVal().getType() == TP_CST)
+            return EvaluatorRes {EV_OK, head->getVal().getConst()};
 
         EvaluatorRes evalR = EVAL_R;
-
-        auto evalL = EvaluatorRes{EV_OK, 0};
+        auto evalL = EvaluatorRes {EV_ERR, 0};
         if (head->getVal().getOperator().getArgsCount() == 2)
             evalL = EVAL_L;
 
@@ -40,97 +50,40 @@ public:
         if (evalR.status != EV_OK)
             return evalR;
 
-        switch(head->getVal().getOperator().getCode()){
+        switch (head->getVal().getOperator().getCode()) {
             case OP_SUB:
-                return EvaluatorRes{EV_OK, evalL.res - evalR.res};
+                return CONV_MATH(evalL.res - evalR.res);
             case OP_ADD:
-                return EvaluatorRes{EV_OK, evalL.res + evalR.res};
+                return CONV_MATH(evalL.res + evalR.res);
             case OP_DIV:
-                return EvaluatorRes{EV_OK, evalL.res / evalR.res};
+                return CONV_MATH(evalL.res / evalR.res);
             case OP_MUL:
-                return EvaluatorRes{EV_OK, evalL.res * evalR.res};
-            case OP_EXP: {
-                double calc = pow(evalL.res, evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
-            case OP_SIN: {
-                double calc = sin(evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
-            case OP_COS: {
-                double calc = cos(evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
-            case OP_TAN: {
-                double calc = tan(evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
-            case OP_CTG: {
-                double calc = 1 / tan(evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
-            case OP_ATAN: {
-                double calc = atan(evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
-            case OP_ACOS: {
-                double calc = acos(evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
-            case OP_ASIN:{
-                double calc = asin(evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
-            case OP_ACTG:{
-                double calc = atan(1 / evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
-            case OP_LOG:{
-                double calc = log(evalR.res);
-                if (floor(calc) == calc || evalMath)
-                    return EvaluatorRes {EV_OK, calc};
-                return EvaluatorRes {EV_MATH_TOK, 0};
-            }
+                return CONV_MATH(evalL.res * evalR.res);
+            case OP_EXP:
+                return funcProcess(pow(evalL.res, evalR.res), evalMath);
+            case OP_SIN:
+                return funcProcess(sin(evalR.res), evalMath);
+            case OP_COS:
+                return funcProcess(cos(evalR.res), evalMath);
+            case OP_TAN:
+                return funcProcess(tan(evalR.res), evalMath);
+            case OP_CTG:
+                return funcProcess(1 / tan(evalR.res), evalMath);
+            case OP_ATAN:
+                return funcProcess(atan(evalR.res), evalMath);
+            case OP_ACOS:
+                return funcProcess(acos(evalR.res), evalMath);
+            case OP_ASIN:
+                return funcProcess(asin(evalR.res), evalMath);
+            case OP_ACTG:
+                return funcProcess(atan(1 / evalR.res), evalMath);
+            case OP_LOG:
+                return funcProcess(log(evalR.res), evalMath);
             default: {
-                printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__ );
+                printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__);
                 return EvaluatorRes {EV_ERR, 0};
             }
         }
-    }
-
-    static Evaluator* New() {
-        auto* thou  = static_cast<Evaluator*>(calloc(1, sizeof(Evaluator)));
-        thou->structure  = nullptr;
-        return thou;
-    }
-
-    void cTor(BinaryTree<ExprNode>* newStructure) {
-        this->structure = newStructure;
-    }
-
-    void dTor(){}
-
-    static void Delete(Evaluator* obj) {
-        obj->dTor();
-        free(obj);
     }
 };
 

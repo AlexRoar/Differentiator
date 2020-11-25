@@ -96,6 +96,14 @@ public:
         return left;
     }
 
+    void setRight(BinaryTree* newRight) {
+        right = newRight;
+    }
+
+    void setLeft(BinaryTree* newLeft) {
+        left = newLeft;
+    }
+
     BinaryTree* copy() const{
         BinaryTree* newCopy = New();
         newCopy->cTor(value, left, right);

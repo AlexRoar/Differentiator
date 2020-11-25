@@ -18,8 +18,7 @@
 #define SIMPLE_FUNC(FUNC, OP) if (strstr(input, #FUNC) == input)                                       \
                                    return (input += sizeof(#FUNC) - 1, retValue.cTor(OP), retValue)
 
-class InfixParser {
-    ClassicStack<ExprNode> stack;
+namespace InfixParser {
     static ExprNode fetchToken(char *&input) {
         ExprNode retValue {};
         while ((*input == ' ' || *input == '\n') && *input != '\0') { input++; }
@@ -60,13 +59,6 @@ class InfixParser {
                 return (retValue.cTor(*input), input += 1, retValue);
             }
         }
-    }
-
-public:
-    static InfixParser *New() {
-        auto *thou = static_cast<InfixParser *>(calloc(1, sizeof(InfixParser)));
-        thou->cTor();
-        return thou;
     }
 
     static ClassicStack<ExprNode> tokenize(char *input) {
@@ -168,19 +160,6 @@ public:
         BinaryTree<ExprNode>* root = converter.pop();
         converter.dTor();
         return root;
-    }
-
-    void cTor() {
-        this->stack.cTor(10);
-    }
-
-    void dTor() {
-        this->stack.dTor();
-    }
-
-    static void Delete(InfixParser *obj) {
-        obj->dTor();
-        free(obj);
     }
 };
 
