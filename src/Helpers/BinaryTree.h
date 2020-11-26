@@ -10,97 +10,97 @@
 
 template<typename Elem>
 class BinaryTree {
-    Elem        value;
-    BinaryTree* left;
-    BinaryTree* right;
+    Elem value;
+    BinaryTree *left;
+    BinaryTree *right;
 
-    void dumpRecursive(FILE* output) const{
+    void dumpRecursive(FILE *output) const {
         fprintf(output, "node%p[label=\"", this);
         switch (value.getType()) {
             case TP_CST: {
                 fprintf(output, "%lg", value.getConst());
                 break;
             }
-            case  TP_OPR: {
+            case TP_OPR: {
                 fprintf(output, "%s", value.getOperator().toString());
                 break;
             }
-            case  TP_VAR: {
+            case TP_VAR: {
                 fprintf(output, "%c", value.getVar());
                 break;
             }
         }
-        fprintf(output,"\"]\n");
-        if (left){
+        fprintf(output, "\"]\n");
+        if (left) {
             fprintf(output, "node%p->node%p\n", this, left);
             left->dumpRecursive(output);
         }
-        if (right){
+        if (right) {
             fprintf(output, "node%p->node%p\n", this, right);
             right->dumpRecursive(output);
         }
     }
 
 public:
-    static BinaryTree* New() {
-        auto* thou  = static_cast<BinaryTree*>(calloc(1, sizeof(BinaryTree)));
-        thou->left  = nullptr;
+    static BinaryTree *New() {
+        auto *thou = static_cast<BinaryTree *>(calloc(1, sizeof(BinaryTree)));
+        thou->left = nullptr;
         thou->right = nullptr;
         return thou;
     }
 
     void cTor(Elem newValue) {
-        this->value  = newValue;
-        this->left   = nullptr;
-        this->right  = nullptr;
+        this->value = newValue;
+        this->left = nullptr;
+        this->right = nullptr;
     }
 
-    void cTor(Elem newValue, BinaryTree* newLeft, BinaryTree* newRight) {
-        this->value  = newValue;
-        this->left   = newLeft;
-        this->right  = newRight;
+    void cTor(Elem newValue, BinaryTree *newLeft, BinaryTree *newRight) {
+        this->value = newValue;
+        this->left = newLeft;
+        this->right = newRight;
     }
 
-    void dTor(){
-        if (left){
+    void dTor() {
+        if (left) {
             Delete(left);
         }
         if (right)
             Delete(right);
     }
 
-    static void Delete(BinaryTree* obj) {
+    static void Delete(BinaryTree *obj) {
         if (!obj)
             return;
         obj->dTor();
         free(obj);
     }
 
-    const Elem& getVal() const{
+    const Elem &getVal() const {
         return value;
     }
 
-    BinaryTree* getLeft() const {
+    BinaryTree *getLeft() const {
         return left;
     }
 
-    BinaryTree* getRight() const {
+    BinaryTree *getRight() const {
         return right;
     }
 
-    BinaryTree*& getRight() {
+    BinaryTree *&getRight() {
         return right;
     }
 
-    BinaryTree*& getLeft() {
+    BinaryTree *&getLeft() {
         return left;
     }
 
-    void setRight(BinaryTree* newRight) {
+    void setRight(BinaryTree *newRight) {
         right = newRight;
     }
 
-    void setLeft(BinaryTree* newLeft) {
+    void setLeft(BinaryTree *newLeft) {
         left = newLeft;
     }
 
@@ -108,22 +108,22 @@ public:
         value = newValue;
     }
 
-    BinaryTree* copy() const{
-        BinaryTree* newCopy = New();
+    BinaryTree *copy() const {
+        BinaryTree *newCopy = New();
         newCopy->cTor(value, left, right);
         return newCopy;
     }
 
-    BinaryTree* deepCopy() const {
+    BinaryTree *deepCopy() const {
         if (left == nullptr && right == nullptr)
             return this->copy();
-        BinaryTree* newCopy = New();
-        newCopy->cTor(value, left? left->deepCopy(): nullptr, right? right->deepCopy(): nullptr);
+        BinaryTree *newCopy = New();
+        newCopy->cTor(value, left ? left->deepCopy() : nullptr, right ? right->deepCopy() : nullptr);
         return newCopy;
     }
 
     void dumpGraph() const {
-        FILE* tmpGr = fopen("graph.gv", "w");
+        FILE *tmpGr = fopen("graph.gv", "w");
         fprintf(tmpGr, "digraph expr{\n");
         this->dumpRecursive(tmpGr);
         fprintf(tmpGr, "}\n");
@@ -132,8 +132,8 @@ public:
         system("dot -Tsvg graph.gv -o graph.svg");
     }
 
-    bool deepCompare(const BinaryTree* other) {
-        if(!other)
+    bool deepCompare(const BinaryTree *other) {
+        if (!other)
             return false;
         if (other->getVal() != value)
             return false;

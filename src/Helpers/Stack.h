@@ -4,65 +4,66 @@
 
 #ifndef DIFFERENTIATOR_STACK_H
 #define DIFFERENTIATOR_STACK_H
+
 #include <cstdlib>
 
-template <typename Elem>
-class ClassicStack{
+template<typename Elem>
+class ClassicStack {
     size_t capacity;
     size_t size;
-    Elem*  data;
+    Elem *data;
 
     void reallocate() {
         if (size + 1 < capacity)
             return;
         size_t newCapacity = 2 * capacity + 1;
-        data = static_cast<Elem*>(realloc(data, newCapacity * sizeof(Elem)));
+        data = static_cast<Elem *>(realloc(data, newCapacity * sizeof(Elem)));
         capacity = newCapacity;
     }
 
 public:
-    static ClassicStack* New() {
-        auto* thou  = static_cast<ClassicStack*>(calloc(1, sizeof(ClassicStack)));
+    static ClassicStack *New() {
+        auto *thou = static_cast<ClassicStack *>(calloc(1, sizeof(ClassicStack)));
         thou->capacity = 0;
         thou->size = 0;
         return thou;
     }
 
     void cTor(size_t initVal) {
-        this->capacity  = initVal;
-        this->size      = 0;
-        this->data      = static_cast<Elem*>(calloc(initVal, sizeof(Elem)));
+        this->capacity = initVal;
+        this->size = 0;
+        this->data = static_cast<Elem *>(calloc(initVal, sizeof(Elem)));
     }
 
-    void dTor(){
+    void dTor() {
         free(data);
     }
 
-    static void Delete(ClassicStack* obj) {
+    static void Delete(ClassicStack *obj) {
         obj->dTor();
         free(obj);
     }
 
-    void push(Elem elem){
+    void push(Elem elem) {
         reallocate();
         this->data[size++] = elem;
     }
 
-    Elem pop(){
+    Elem pop() {
         if (size == 0)
             return Elem();
         return this->data[--size];
     }
 
-    Elem clear(){
+    Elem clear() {
         size = 0;
     }
 
-    Elem top(){
+    Elem top() {
         return this->data[size - 1];
     }
 
-    Elem* getStorage() {
+    Elem *getStorage() {
         return data;
     }
 

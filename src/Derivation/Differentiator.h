@@ -16,18 +16,18 @@
 #include <Optimization/ExprOptimizer.h>
 
 namespace Differentiator {
-    static BinaryTree<ExprNode>* derivative(BinaryTree<ExprNode>* structure, char var, FILE* laFile= nullptr){
+    static BinaryTree<ExprNode> *derivative(BinaryTree<ExprNode> *structure, char var, FILE *laFile = nullptr) {
         return DerivativeRule::derivative(structure, var, laFile);
     }
 
     void ArticleGenerator(FILE *output, char *content) {
         LaTEXDumper::dumpDocStart(output);
 
-        auto* graph = InfixParser::parseExpression(content);
+        auto *graph = InfixParser::parseExpression(content);
         LaTEXDumper::dumpTreeBlock(output, graph);
 
         LaTEXDumper::rawWrite(output, LaTEXPhrases::primarySimplify);
-        ExprOptimizer optimizer{};
+        ExprOptimizer optimizer {};
         optimizer.cTor(graph);
         optimizer.simplify(false, output);
 
@@ -38,7 +38,7 @@ namespace Differentiator {
 
         LaTEXDumper::rawWrite(output, LaTEXPhrases::primaryDiff);
 
-        auto* derived = Differentiator::derivative(graph, 'x', output);
+        auto *derived = Differentiator::derivative(graph, 'x', output);
         LaTEXDumper::rawWrite(output, LaTEXPhrases::primaryDiffEnd);
         LaTEXDumper::dumpDiffResult(output, content, derived);
         optimizer.cTor(derived);
@@ -49,6 +49,8 @@ namespace Differentiator {
         LaTEXDumper::rawWrite(output, LaTEXPhrases::secondSimplifyEnd);
         LaTEXDumper::dumpDiffResult(output, content, derived);
 
+        BinaryTree<ExprNode>::Delete(graph);
+        BinaryTree<ExprNode>::Delete(derived);
         LaTEXDumper::dumpDocEnd(output);
     }
 };

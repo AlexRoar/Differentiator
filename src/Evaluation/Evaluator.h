@@ -28,7 +28,8 @@ namespace Evaluator {
         return EvaluatorRes {EV_MATH_TOK, 0};
     }
 
-    static EvaluatorRes eval(BinaryTree<ExprNode>* head, bool evalMath=false, bool evalVar=false, const double* vars= nullptr) {
+    static EvaluatorRes
+    eval(BinaryTree<ExprNode> *head, bool evalMath = false, bool evalVar = false, const double *vars = nullptr) {
         if (!head)
             return EvaluatorRes {EV_ERR, 0};
         if (head->getVal().getType() == TP_VAR) {

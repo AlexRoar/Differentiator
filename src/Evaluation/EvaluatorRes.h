@@ -16,8 +16,8 @@ enum EvalStatus {
 };
 
 struct EvaluatorRes {
-    EvalStatus  status;
-    double      res;
+    EvalStatus status;
+    double res;
 };
 
 #endif //DIFFERENTIATOR_EVALUATORRES_H

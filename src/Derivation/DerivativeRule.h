@@ -10,7 +10,6 @@
 #include <Helpers/BinaryTree.h>
 #include <Derivation/DerivationDSL.h>
 
-
 struct DerivativeRule {
     static BinaryTree<ExprNode> *derivative(BinaryTree<ExprNode> *node, char var, FILE *laFile = nullptr) {
         if (node->getVal().getType() == TP_CST ||
@@ -58,7 +57,7 @@ struct DerivativeRule {
                     POW(COS(cR), CONST(2))
                                        ),
                                        dR));
-            case OP_LOG: LA_DUMPED(MUL(DIV(CONST(1), cR), dR));
+            case OP_LOG:  LA_DUMPED(MUL(DIV(CONST(1), cR), dR));
             case OP_ATAN: LA_DUMPED(MUL(DIV(CONST(1), ADD(CONST(1), POW(cR, CONST(2)))), dR));
             case OP_ACOS: LA_DUMPED(MUL(DIV(CONST(-1), POW(SUB(CONST(1), POW(cR, CONST(2))), CONST(0.5))), dR));
             case OP_ASIN: LA_DUMPED(MUL(DIV(CONST(1), POW(SUB(CONST(1), POW(cR, CONST(2))), CONST(0.5))), dR));
@@ -130,4 +129,5 @@ struct DerivativeRule {
 };
 
 #include <Derivation/DerivationDSLUndef.h>
+
 #endif //DIFFERENTIATOR_DERIVATIVERULE_H

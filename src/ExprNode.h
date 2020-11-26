@@ -8,50 +8,50 @@
 #include <cstdlib>
 
 enum ExprType {
-    TP_VAR  = 'x',
-    TP_CST  = 'a',
-    TP_OPR  = 'o'
+    TP_VAR = 'x',
+    TP_CST = 'a',
+    TP_OPR = 'o'
 };
 
 enum ExprOperatorCode {
-    OP_SUB  = 100  + '-',
-    OP_ADD  = 200  + '+',
-    OP_DIV  = 300  + '/',
-    OP_MUL  = 400  + '*',
-    OP_EXP  = 500  + '^',
-    OP_SIN  = 600  + 's',
-    OP_COS  = 700  + 'c',
-    OP_TAN  = 800  + 't',
-    OP_CTG  = 900  + 'g',
-    OP_LOG  = 1000 + 'l',
-    OP_LPA  = 1100 + '(',
-    OP_RPA  = 1200 + ')',
-    OP_ATAN = 1300 + 't',
-    OP_ACOS = 1400 + 'c',
-    OP_ASIN = 1500 + 's',
-    OP_ACTG = 1600 + 'c',
+    OP_SUB  ,
+    OP_ADD  ,
+    OP_DIV  ,
+    OP_MUL  ,
+    OP_EXP  ,
+    OP_SIN  ,
+    OP_COS  ,
+    OP_TAN  ,
+    OP_CTG  ,
+    OP_LOG  ,
+    OP_LPA  ,
+    OP_RPA  ,
+    OP_ATAN ,
+    OP_ACOS ,
+    OP_ASIN ,
+    OP_ACTG ,
 };
 
 enum ExprOperatorType {
-    OP_T_OPER = 100,
-    OP_T_FUNC = 200
+    OP_T_OPER,
+    OP_T_FUNC,
 };
 
 enum ExprAssociativity {
-    ASSOC_LEFT  = -10,
-    ASSOC_RIGHT =  10,
-    ASSOC_NONE  =  0
+    ASSOC_LEFT ,
+    ASSOC_RIGHT,
+    ASSOC_NONE ,
 };
 
 class ExprOperator {
-    ExprOperatorCode   code;
-    ExprAssociativity  assoc;
-    ExprOperatorType   opType;
-    unsigned           precedence;
-    unsigned           argsCount;
+    ExprOperatorCode code;
+    ExprAssociativity assoc;
+    ExprOperatorType opType;
+    unsigned precedence;
+    unsigned argsCount;
 public:
-    static ExprOperator* New() {
-        auto* thou  = static_cast<ExprOperator*>(calloc(1, sizeof(ExprOperator)));
+    static ExprOperator *New() {
+        auto *thou = static_cast<ExprOperator *>(calloc(1, sizeof(ExprOperator)));
         thou->cTor(OP_ADD);
         return thou;
     }
@@ -68,25 +68,25 @@ public:
         switch (code) {
             case OP_SUB:
             case OP_ADD: {
-                assoc      = ASSOC_LEFT;
+                assoc = ASSOC_LEFT;
                 precedence = 2;
-                argsCount  = 2;
-                opType     = OP_T_OPER;
+                argsCount = 2;
+                opType = OP_T_OPER;
                 break;
             }
             case OP_MUL:
             case OP_DIV: {
-                assoc      = ASSOC_LEFT;
+                assoc = ASSOC_LEFT;
                 precedence = 3;
-                argsCount  = 2;
-                opType     = OP_T_OPER;
+                argsCount = 2;
+                opType = OP_T_OPER;
                 break;
             }
             case OP_EXP: {
-                assoc      = ASSOC_RIGHT;
+                assoc = ASSOC_RIGHT;
                 precedence = 4;
-                argsCount  = 2;
-                opType     = OP_T_OPER;
+                argsCount = 2;
+                opType = OP_T_OPER;
                 break;
             }
             case OP_SIN:
@@ -98,145 +98,185 @@ public:
             case OP_ASIN:
             case OP_ACTG:
             case OP_LOG: {
-                assoc      = ASSOC_NONE;
+                assoc = ASSOC_NONE;
                 precedence = 5;
-                argsCount  = 1;
-                opType     = OP_T_FUNC;
+                argsCount = 1;
+                opType = OP_T_FUNC;
                 break;
             }
             case OP_RPA:
-            case OP_LPA:{
-                assoc      = ASSOC_NONE;
+            case OP_LPA: {
+                assoc = ASSOC_NONE;
                 precedence = 6;
-                opType     = OP_T_OPER;
+                opType = OP_T_OPER;
                 break;
             }
         }
     }
 
-    void dTor(){}
+    void dTor() {}
 
-    static void Delete(ExprOperator* obj) {
+    static void Delete(ExprOperator *obj) {
         obj->dTor();
         free(obj);
     }
 
-    [[nodiscard]] ExprAssociativity getAssoc() const{
+    [[nodiscard]] ExprAssociativity getAssoc() const {
         return assoc;
     }
 
-    [[nodiscard]] ExprOperatorCode getCode() const{
+    [[nodiscard]] ExprOperatorCode getCode() const {
         return code;
     }
 
-    [[nodiscard]] unsigned getPrecedence() const{
+    [[nodiscard]] unsigned getPrecedence() const {
         return precedence;
     }
 
-    [[nodiscard]] unsigned getArgsCount() const{
+    [[nodiscard]] unsigned getArgsCount() const {
         return argsCount;
     }
 
-    [[nodiscard]] ExprOperatorType getOpType() const{
+    [[nodiscard]] ExprOperatorType getOpType() const {
         return opType;
     }
 
-    const char* toString() {
+    const char *toString() {
         switch (code) {
-            case OP_SUB:  return "-";
-            case OP_ADD:  return "+";
-            case OP_MUL:  return "*";
-            case OP_DIV:  return "/";
-            case OP_EXP:  return "^";
-            case OP_SIN:  return "sin";
-            case OP_COS:  return "cos";
-            case OP_TAN:  return "tan";
-            case OP_CTG:  return "ctg";
-            case OP_LOG:  return "log";
-            case OP_RPA:  return "(";
-            case OP_LPA:  return ")";
-            case OP_ATAN: return "arctan";
-            case OP_ACOS: return "arccos";
-            case OP_ASIN: return "arcsin";
-            case OP_ACTG: return "arccot";
+            case OP_SUB:
+                return "-";
+            case OP_ADD:
+                return "+";
+            case OP_MUL:
+                return "*";
+            case OP_DIV:
+                return "/";
+            case OP_EXP:
+                return "^";
+            case OP_SIN:
+                return "sin";
+            case OP_COS:
+                return "cos";
+            case OP_TAN:
+                return "tan";
+            case OP_CTG:
+                return "ctg";
+            case OP_LOG:
+                return "log";
+            case OP_RPA:
+                return "(";
+            case OP_LPA:
+                return ")";
+            case OP_ATAN:
+                return "arctan";
+            case OP_ACOS:
+                return "arccos";
+            case OP_ASIN:
+                return "arcsin";
+            case OP_ACTG:
+                return "arccot";
         }
     }
 
-    bool operator<(const ExprOperator& other) const {
+    bool operator<(const ExprOperator &other) const {
         return precedence < other.precedence;
     }
 
-    bool operator<=(const ExprOperator& other) const {
+    bool operator<=(const ExprOperator &other) const {
         return precedence <= other.precedence;
     }
 
-    bool operator>(const ExprOperator& other) const {
+    bool operator>(const ExprOperator &other) const {
         return precedence > other.precedence;
     }
 
-    bool operator>=(const ExprOperator& other) const {
+    bool operator>=(const ExprOperator &other) const {
         return precedence >= other.precedence;
     }
 
-    bool operator==(const ExprOperator& other) const {
+    bool operator==(const ExprOperator &other) const {
         return code == other.code;
+    }
+
+    bool operator<(const ExprOperatorCode &other) const {
+        ExprOperator tmp {};
+        tmp.cTor(other);
+        return precedence < tmp.precedence;
+    }
+
+    bool operator<=(const ExprOperatorCode &other) const {
+        ExprOperator tmp {};
+        tmp.cTor(other);
+        return precedence <= tmp.precedence;
+    }
+
+    bool operator>(const ExprOperatorCode &other) const {
+        ExprOperator tmp {};
+        tmp.cTor(other);
+        return precedence > tmp.precedence;
+    }
+
+    bool operator>=(const ExprOperatorCode &other) const {
+        ExprOperator tmp {};
+        tmp.cTor(other);
+        return precedence >= tmp.precedence;
     }
 };
 
 class ExprNode {
     union {
-        char            variable;
-        double          value;
-        ExprOperator    op;
+        char variable;
+        double value;
+        ExprOperator op;
     };
-    ExprType        type;
+    ExprType type;
 
 public:
-    static ExprNode* New() {
-        auto* thou  = static_cast<ExprNode*>(calloc(1, sizeof(ExprNode)));
+    static ExprNode *New() {
+        auto *thou = static_cast<ExprNode *>(calloc(1, sizeof(ExprNode)));
         return thou;
     }
 
     void cTor(char newVariable) {
         this->variable = newVariable;
-        this->type     = TP_VAR;
+        this->type = TP_VAR;
     }
 
     void cTor(double newValue) {
         this->value = newValue;
-        this->type  = TP_CST;
+        this->type = TP_CST;
     }
 
     void cTor(ExprOperatorCode exprOperatorCode) {
         this->op = ExprOperator();
         op.cTor(exprOperatorCode);
-        this->type  = TP_OPR;
+        this->type = TP_OPR;
     }
 
-    void dTor(){}
+    void dTor() {}
 
-    static void Delete(ExprNode* obj) {
+    static void Delete(ExprNode *obj) {
         obj->dTor();
         free(obj);
     }
 
-    [[nodiscard]] ExprType getType() const{
+    [[nodiscard]] ExprType getType() const {
         return type;
     }
 
-    [[nodiscard]] char getVar() const{
+    [[nodiscard]] char getVar() const {
         return variable;
     }
 
-    [[nodiscard]] double getConst() const{
+    [[nodiscard]] double getConst() const {
         return value;
     }
 
-    [[nodiscard]] ExprOperator getOperator() const{
+    [[nodiscard]] ExprOperator getOperator() const {
         return op;
     }
 
-    bool operator==(const ExprNode& other){
+    bool operator==(const ExprNode &other) {
         if (type != other.type)
             return false;
         switch (type) {

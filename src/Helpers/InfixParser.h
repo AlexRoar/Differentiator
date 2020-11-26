@@ -25,12 +25,18 @@ namespace InfixParser {
         if (*input == '\0')
             return retValue;
         switch (*input) {
-            case '/': return SIMPLE_OP(OP_DIV);
-            case '*': return SIMPLE_OP(OP_MUL);
-            case '+': return SIMPLE_OP(OP_ADD);
-            case '^': return SIMPLE_OP(OP_EXP);
-            case '(': return SIMPLE_OP(OP_LPA);
-            case ')': return SIMPLE_OP(OP_RPA);
+            case '/':
+                return SIMPLE_OP(OP_DIV);
+            case '*':
+                return SIMPLE_OP(OP_MUL);
+            case '+':
+                return SIMPLE_OP(OP_ADD);
+            case '^':
+                return SIMPLE_OP(OP_EXP);
+            case '(':
+                return SIMPLE_OP(OP_LPA);
+            case ')':
+                return SIMPLE_OP(OP_RPA);
             case '-': {
                 int offset = 0;
                 double constant = 0;
@@ -47,11 +53,11 @@ namespace InfixParser {
                     input += offset;
                     return (retValue.cTor(constant), retValue);
                 }
-                else SIMPLE_FUNC(sin,    OP_SIN );
-                else SIMPLE_FUNC(cos,    OP_COS );
-                else SIMPLE_FUNC(ctg,    OP_CTG );
-                else SIMPLE_FUNC(log,    OP_LOG );
-                else SIMPLE_FUNC(tan,    OP_TAN );
+                else SIMPLE_FUNC(sin, OP_SIN);
+                else SIMPLE_FUNC(cos, OP_COS);
+                else SIMPLE_FUNC(ctg, OP_CTG);
+                else SIMPLE_FUNC(log, OP_LOG);
+                else SIMPLE_FUNC(tan, OP_TAN);
                 else SIMPLE_FUNC(arctan, OP_ATAN);
                 else SIMPLE_FUNC(arccot, OP_ACTG);
                 else SIMPLE_FUNC(arcsin, OP_ASIN);
@@ -90,7 +96,7 @@ namespace InfixParser {
                     outputList.pushBack(currentToken);
                     break;
                 case TP_OPR: {
-                    if (currentToken.getOperator().getOpType() == OP_T_FUNC){
+                    if (currentToken.getOperator().getOpType() == OP_T_FUNC) {
                         operatorStack.push(currentToken);
                         break;
                     } else if (currentToken.getOperator().getCode() == OP_LPA) {
@@ -105,16 +111,18 @@ namespace InfixParser {
                                 return nullptr;
                         }
                         operatorStack.pop();
-                        if (operatorStack.top().getOperator().getOpType() == OP_T_FUNC){
+                        if (operatorStack.top().getOperator().getOpType() == OP_T_FUNC) {
                             ExprNode popped = operatorStack.pop();
                             outputList.pushBack(popped);
                         }
                     } else {
                         if (operatorStack.getSize() != 0) {
-                            while (operatorStack.top().getOperator().getCode() != OP_LPA && operatorStack.top().getOperator() >
+                            while (operatorStack.top().getOperator().getCode() != OP_LPA &&
+                                   operatorStack.top().getOperator() >
                                    currentToken.getOperator() ||
                                    (operatorStack.top().getOperator().getPrecedence() ==
-                                    currentToken.getOperator().getPrecedence() && currentToken.getOperator().getAssoc() == ASSOC_LEFT)) {
+                                    currentToken.getOperator().getPrecedence() &&
+                                    currentToken.getOperator().getAssoc() == ASSOC_LEFT)) {
                                 ExprNode popped = operatorStack.pop();
                                 outputList.pushBack(popped);
                                 if (operatorStack.getSize() == 0)
@@ -130,25 +138,25 @@ namespace InfixParser {
         while (operatorStack.getSize() != 0) {
             ExprNode popped = operatorStack.pop();
             if (popped.getType() == TP_OPR && (popped.getOperator().getCode() == OP_LPA ||
-                                                popped.getOperator().getCode() == OP_RPA))
+                                               popped.getOperator().getCode() == OP_RPA))
                 return nullptr;
             outputList.pushBack(popped);
         }
         operatorStack.dTor();
         entities.dTor();
 
-        ClassicStack<BinaryTree<ExprNode>* > converter {};
+        ClassicStack<BinaryTree<ExprNode> *> converter {};
         converter.cTor(10);
 
         for (size_t it = outputList.begin(); it != 0; outputList.nextIterator(&it)) {
             ExprNode token {};
             outputList.get(it, &token);
-            auto* newNode =  BinaryTree<ExprNode>::New();
+            auto *newNode = BinaryTree<ExprNode>::New();
             if (token.getType() != TP_OPR) {
                 newNode->cTor(token);
             } else {
-                BinaryTree<ExprNode>* right = converter.pop();
-                BinaryTree<ExprNode>* left = nullptr;
+                BinaryTree<ExprNode> *right = converter.pop();
+                BinaryTree<ExprNode> *left = nullptr;
                 if (token.getOperator().getArgsCount() == 2) {
                     left = converter.pop();
                 }
@@ -157,7 +165,7 @@ namespace InfixParser {
             converter.push(newNode);
         }
 
-        BinaryTree<ExprNode>* root = converter.pop();
+        BinaryTree<ExprNode> *root = converter.pop();
         converter.dTor();
         return root;
     }
