@@ -1,19 +1,7 @@
 digraph expr{
-node0x7fb3c3f046e0[label="+"]
-node0x7fb3c3f046e0->node0x7fb3c3f042c0
-node0x7fb3c3f042c0[label="1"]
-node0x7fb3c3f046e0->node0x7fb3c3f046b0
-node0x7fb3c3f046b0[label="/"]
-node0x7fb3c3f046b0->node0x7fb3c3f04590
-node0x7fb3c3f04590[label="-10"]
-node0x7fb3c3f046b0->node0x7fb3c3f04680
-node0x7fb3c3f04680[label="^"]
-node0x7fb3c3f04680->node0x7fb3c3f045c0
-node0x7fb3c3f045c0[label="*"]
-node0x7fb3c3f045c0->node0x7fb3c3f045f0
-node0x7fb3c3f045f0[label="2"]
-node0x7fb3c3f045c0->node0x7fb3c3f04620
-node0x7fb3c3f04620[label="x"]
-node0x7fb3c3f04680->node0x7fb3c3f04650
-node0x7fb3c3f04650[label="2"]
+node0x7ff79a504270[label="^"]
+node0x7ff79a504270->node0x7ff79a5041e0
+node0x7ff79a5041e0[label="x"]
+node0x7ff79a504270->node0x7ff79a504240
+node0x7ff79a504240[label="3"]
 }

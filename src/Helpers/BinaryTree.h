@@ -104,6 +104,10 @@ public:
         left = newLeft;
     }
 
+    void setVal(Elem newValue) {
+        value = newValue;
+    }
+
     BinaryTree* copy() const{
         BinaryTree* newCopy = New();
         newCopy->cTor(value, left, right);
@@ -126,6 +130,27 @@ public:
         fclose(tmpGr);
 
         system("dot -Tsvg graph.gv -o graph.svg");
+    }
+
+    bool deepCompare(const BinaryTree* other) {
+        if(!other)
+            return false;
+        if (other->getVal() != value)
+            return false;
+        bool res = true;
+        if (left)
+            res &= left->deepCompare(other->left);
+        else {
+            if (other->left)
+                return false;
+        }
+        if (right)
+            res &= right->deepCompare(other->right);
+        else {
+            if (other->right)
+                return false;
+        }
+        return res;
     }
 };
 

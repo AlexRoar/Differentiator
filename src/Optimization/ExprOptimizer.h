@@ -5,16 +5,30 @@
 #ifndef DIFFERENTIATOR_EXPROPTIMIZER_H
 #define DIFFERENTIATOR_EXPROPTIMIZER_H
 
-#include "Helpers/BinaryTree.h"
-#include "ExprNode.h"
-#include "Evaluation/Evaluator.h"
-#include "Optimization/SpecificOptimizers.h"
+#include <Helpers/BinaryTree.h>
+#include <ExprNode.h>
+#include <Evaluation/Evaluator.h>
+#include <Optimization/SpecificOptimizers.h>
 
 #define EVAL_L Evaluator::eval(head->getLeft(), evalMath)
 #define EVAL_R Evaluator::eval(head->getRight(), evalMath)
 
 #define EXPECT_EVAL_R_EQ(val) (evalR.status == EV_OK && evalR.res == val)
 #define EXPECT_EVAL_L_EQ(val) (evalL.status == EV_OK && evalL.res == val)
+
+#define LA_DUMPED(code) { \
+                            unsigned before = changed; \
+                            BinaryTree<ExprNode>* copy = head->deepCopy();      \
+                            {code}                    \
+                            if (before != changed){    \
+                                LaTEXDumper::rawWrite(laFile, LaTEXPhrases::primarySimplifyStartCasesRandom()); \
+                                LaTEXDumper::dumpTreeBlock(laFile, copy);       \
+                                LaTEXDumper::rawWrite(laFile, LaTEXPhrases::primarySimplifyEndCasesRandom()); \
+                                LaTEXDumper::dumpTreeBlock(laFile, head);       \
+                            }\
+                            BinaryTree<ExprNode>::Delete(copy);\
+                            break;  \
+                        }
 
 class ExprOptimizer {
     BinaryTree<ExprNode> *structure;
@@ -49,35 +63,25 @@ class ExprOptimizer {
         return res;
     }
 
-    unsigned convTrivialExpr(BinaryTree<ExprNode> *&head, bool evalMath=false) {
+    unsigned convTrivialExpr(BinaryTree<ExprNode> *&head, bool evalMath = false, FILE *laFile = nullptr) {
         unsigned changed = 0;
         if (head->getVal().getType() == TP_VAR || head->getVal().getType() == TP_CST)
-            return changed;
+            return 0;
 
         if (head->getRight())
-            changed += convTrivialExpr(head->getRight());
+            changed += convTrivialExpr(head->getRight(), evalMath, laFile);
         if (head->getLeft())
-            changed += convTrivialExpr(head->getLeft());
+            changed += convTrivialExpr(head->getLeft(), evalMath, laFile);
 
         EvaluatorRes evalR = EVAL_R;
         EvaluatorRes evalL = EVAL_L;
+
         switch (head->getVal().getOperator().getCode()) {
-            case OP_SUB:
-                changed += SpecificOptimizers::subOptimizer(head, evalL, evalR, evalMath);
-                break;
-            case OP_ADD:
-                changed += SpecificOptimizers::addOptimizer(head, evalL, evalR, evalMath);
-                break;
-            case OP_DIV:
-                changed += SpecificOptimizers::divOptimizer(head, evalL, evalR, evalMath);
-                break;
-            case OP_MUL:
-                changed += SpecificOptimizers::mulOptimizer(head, evalL, evalR, evalMath);
-                break;
-            case OP_EXP: {
-                changed += SpecificOptimizers::expOptimizer(head, evalL, evalR, evalMath);
-                break;
-            }
+            case OP_SUB: LA_DUMPED (changed += SpecificOptimizers::subOptimizer(head, evalL, evalR, evalMath););
+            case OP_ADD: LA_DUMPED (changed += SpecificOptimizers::addOptimizer(head, evalL, evalR, evalMath););
+            case OP_DIV: LA_DUMPED (changed += SpecificOptimizers::divOptimizer(head, evalL, evalR, evalMath););
+            case OP_MUL: LA_DUMPED (changed += SpecificOptimizers::mulOptimizer(head, evalL, evalR, evalMath););
+            case OP_EXP: LA_DUMPED (changed += SpecificOptimizers::expOptimizer(head, evalL, evalR, evalMath););
             case OP_SIN:
             case OP_COS:
             case OP_TAN:
@@ -86,18 +90,18 @@ class ExprOptimizer {
             case OP_ACOS:
             case OP_ASIN:
             case OP_ACTG:
-            case OP_LOG:{
+            case OP_LOG: {
                 break;
             }
             default: {
-                printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__ );
+                printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__);
                 return 0;
             }
         }
         return changed;
     }
 
-    unsigned convConsts(BinaryTree<ExprNode> *head, bool evalMath=false) {
+    unsigned convConsts(BinaryTree<ExprNode> *head, bool evalMath = false, FILE *laFile = nullptr) {
         EvaluatorRes result = Evaluator::eval(head, evalMath);
         unsigned changed = 0;
         if (result.status == EV_OK) {
@@ -105,15 +109,19 @@ class ExprOptimizer {
                 return 0;
             ExprNode newValue {};
             newValue.cTor(result.res);
+            LaTEXDumper::rawWrite(laFile, "Легко видно что:\n");
+            LaTEXDumper::dumpTreeBlock(laFile, head);
             BinaryTree<ExprNode>::Delete(head->getLeft());
             BinaryTree<ExprNode>::Delete(head->getRight());
             head->cTor(newValue);
+            LaTEXDumper::rawWrite(laFile, "преобразуется в\n");
+            LaTEXDumper::dumpTreeBlock(laFile, head);
             changed += 1;
         } else {
             if (head->getLeft())
-                changed += convConsts(head->getLeft(), evalMath);
+                changed += convConsts(head->getLeft(), evalMath, laFile);
             if (head->getRight())
-                changed += convConsts(head->getRight(), evalMath);
+                changed += convConsts(head->getRight(), evalMath, laFile);
         }
         return changed;
     }
@@ -125,10 +133,10 @@ public:
         return thou;
     }
 
-    void simplify(bool evalMath=false) {
-        unsigned changes = convConsts(structure, evalMath) + convTrivialExpr(structure, evalMath);
+    void simplify(bool evalMath = false, FILE *laFile = nullptr) {
+        unsigned changes = convConsts(structure, evalMath, laFile) + convTrivialExpr(structure, evalMath, laFile);
         while (changes) {
-            changes = convConsts(structure, evalMath) + convTrivialExpr(structure, evalMath);
+            changes = convConsts(structure, evalMath, laFile) + convTrivialExpr(structure, evalMath, laFile);
         }
     }
 
@@ -143,7 +151,7 @@ public:
         free(obj);
     }
 
-    BinaryTree<ExprNode> * getStructure(){
+    BinaryTree<ExprNode> *getStructure() {
         return structure;
     }
 };

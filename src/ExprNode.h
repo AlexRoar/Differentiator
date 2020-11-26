@@ -235,6 +235,19 @@ public:
     [[nodiscard]] ExprOperator getOperator() const{
         return op;
     }
+
+    bool operator==(const ExprNode& other){
+        if (type != other.type)
+            return false;
+        switch (type) {
+            case TP_VAR:
+                return variable == other.variable;
+            case TP_CST:
+                return value == other.value;
+            case TP_OPR:
+                return op == other.op;
+        }
+    }
 };
 
 #endif //DIFFERENTIATOR_EXPRTYPE_H

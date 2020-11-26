@@ -5,8 +5,8 @@
 #ifndef DIFFERENTIATOR_DERIVATIONDSL_H
 #define DIFFERENTIATOR_DERIVATIONDSL_H
 
-#define dL derivative(node->getLeft(), var)
-#define dR derivative(node->getRight(), var)
+#define dL derivative(node->getLeft(), var, laFile)
+#define dR derivative(node->getRight(), var, laFile)
 #define cL node->getLeft()->deepCopy()
 #define cR node->getRight()->deepCopy()
 #define CONST(VAL) constVal(VAL)
@@ -27,6 +27,14 @@
     newNode->cTor(nodeVal, L, R);               \
     return newNode;                             \
 }
+
+#define LA_DUMPED(expr) {   LaTEXDumper::rawWrite(laFile, LaTEXPhrases::primaryDiffStartCasesRandom()); \
+                            latexDump(laFile, node);            \
+                            BinaryTree<ExprNode>* result = expr;             \
+                            LaTEXDumper::rawWrite(laFile, LaTEXPhrases::primaryDiffEndCasesRandom()); \
+                            latexDump(laFile, result);          \
+                            return result;                      \
+                            }
 
 
 #endif //DIFFERENTIATOR_DERIVATIONDSL_H
