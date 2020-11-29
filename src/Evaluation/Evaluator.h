@@ -60,26 +60,11 @@ namespace Evaluator {
                 return CONV_MATH(evalL.res / evalR.res);
             case OP_MUL:
                 return CONV_MATH(evalL.res * evalR.res);
-            case OP_EXP:
+            case OP_POW:
                 return funcProcess(pow(evalL.res, evalR.res), evalMath);
-            case OP_SIN:
-                return funcProcess(sin(evalR.res), evalMath);
-            case OP_COS:
-                return funcProcess(cos(evalR.res), evalMath);
-            case OP_TAN:
-                return funcProcess(tan(evalR.res), evalMath);
-            case OP_CTG:
-                return funcProcess(1 / tan(evalR.res), evalMath);
-            case OP_ATAN:
-                return funcProcess(atan(evalR.res), evalMath);
-            case OP_ACOS:
-                return funcProcess(acos(evalR.res), evalMath);
-            case OP_ASIN:
-                return funcProcess(asin(evalR.res), evalMath);
-            case OP_ACTG:
-                return funcProcess(atan(1 / evalR.res), evalMath);
-            case OP_LOG:
-                return funcProcess(log(evalR.res), evalMath);
+#define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE: return funcProcess(eval, evalMath);
+#include <Syntax/Syntax.h>
+#undef DEF_FUNC
             default: {
                 printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__);
                 return EvaluatorRes {EV_ERR, 0};

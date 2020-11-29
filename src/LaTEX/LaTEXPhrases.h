@@ -6,78 +6,92 @@
 #define DIFFERENTIATOR_LATEXPHRASES_H
 
 struct LaTEXPhrases {
-    constexpr static const char *docStart = "\t\\begin{titlepage}                                                         \n"
-                                            "\t\t\\newpage                                                                        \n"
-                                            "\t\t\\begin{center}                                                        \n"
-                                            "\t\t\t{\\bfseries Министерство Образования и Науки Российской Федерации \\\\\n"
-                                            "\t\t\t\tМосковский Физико Технический Институт}                               \n"
-                                            "\t\t\t\\vspace{1cm}                                                          \n"
-                                            "                                       \n"
-                                            "\t\t\tКафедра численных методов                                                         \n"
-                                            "\t\t\t\\vspace{6em}                                                          \n"
-                                            "\t\t\t                                             \n"
-                                            "\t\t\tДремов Александр Олегович\\\\                                                      \n"
-                                            "\t\t\\end{center}                                                          \n"
-                                            "\t\t\n"
-                                            "\t\t\\vspace{1.2em}                                                        \n"
-                                            "\t\t\n"
-                                            "\t\t\\begin{center}                                                        \n"
-                                            "\t\t\t\\Large{\\textbf{Расчет производной сложной функции с применением методов квантовой запутанности}}                                                                                                \n"
-                                            "\t\t\\end{center}                                                          \n"
-                                            "\t\t\n"
-                                            "\t\t\\vspace{5em}                                                          \n"
-                                            "\t\t\n"
-                                            "\t\t\\begin{center}                                                                                                                          \n"
-                                            "\t\t\tкандидатская диссертация                                                           \n"
-                                            "\t\t\\end{center}                                                         \n"
-                                            "\t\t\\vspace{6em}                                                          \n"
-                                            "\t\t\n"
-                                            "\t\t\\vspace{\\fill}                                                    \n"
-                                            "\t\t\n"
-                                            "\t\t\\begin{center}                                                        \n"
-                                            "\t\t\tМосква 2020                                                                \n"
-                                            "\t\t\\end{center}                                                          \n"
-                                            "\t\t\n"
-                                            "\t\\end{titlepage}\n\n";
-    constexpr static const char *intro = "\\section{\\Large{Введение}}\n"
-                                         "\n"
-                                         "В современном мире с развитием технологий подгона и вычислений в "
-                                         "системах быстрых отображений, появилось необходимость развития "
-                                         "сферы действия запутанных и квази-запутанных алгоритмов (от англ. lorem ipsum). "
-                                         "Так, при рассмотрении предложенной темы были найдены редкие примеры отличные от "
-                                         "всех остальных по максимально допустимой энтропии.\n"
-                                         "\n"
-                                         "Так как данная тема является основной при изучении запутанности материи построенной "
-                                         "на опорных векторах элементарных систем, было принято решеие досканально изучить выбивающиеся из общего представления выражения.\n"
-                                         "\n"
-                                         "В данной работе предложен метод преобразования сложной функции для получения необходимого результата."
-                                         " Более того, предложенный метод отличается на 10 процентов эффективностью от своих аналогов, которых найти не удалось.\n"
-                                         "\n"
-                                         "\\section{\\Large{Открытие}}\n"
-                                         "Уникальным в своем роде является следующее выражение. Далее, будем рассматривать именно его.\n\n";
+public:
+    static const char* getDocStart() {
+        if (docStart == nullptr)
+            docStart = readFile("files/docStart.txt");
+        return docStart;
+    }
 
+    static const char* getIntro() {
+        if (intro == nullptr)
+            intro = readFile("files/intro.txt");
+        return intro;
+    }
 
-    constexpr static const char *primarySimplify = "\\section{\\Large{Упрощение исходного}}\n"
-                                                   "Для выполнения квази-запутанных операций менее запутанно, упростим топологическую основу данного выражения.\n\n";
+    static const char* getPrimarySimplify() {
+        if (primarySimplify == nullptr)
+            primarySimplify = readFile("files/primarySimplify.txt");
+        return primarySimplify;
+    }
 
-    constexpr static const char *primarySimplifyEnd = "Итого, получено выражение в простате которого сомневаться не приходится.\n\n";
+    static const char* getPrimarySimplifyEnd() {
+        if (primarySimplifyEnd == nullptr)
+            primarySimplifyEnd = readFile("files/primarySimplifyEnd.txt");
+        return primarySimplifyEnd;
+    }
 
-    constexpr static const char *primaryDiff = "\\section{\\Large{Дифференцирование}}\n"
-                                               "Перейдём же к основной теме данной статьи."
-                                               "В последующих строчках будут произвелены преобразования которые одним своим существованием "
-                                               "повышают энтропию сильнее хаоса нашей солнечной системы. \n\n";
+    static const char* getPrimaryDiff() {
+        if (primaryDiff == nullptr)
+            primaryDiff = readFile("files/primaryDiff.txt");
+        return primaryDiff;
+    }
 
-    constexpr static const char *primaryDiffEnd = "Итого пришли к следующему выражению. "
-                                                  "К этому моменту читатель уже должен был догадаться почему именно это "
-                                                  "выражение несет в себе такую большую смысловую нагрузку. "
-                                                  "Если догадаться не удалось, перечитайте все с начала.";
+    static const char* getPrimaryDiffEnd() {
+        if (primaryDiffEnd == nullptr)
+            primaryDiffEnd = readFile("files/primaryDiffEnd.txt");
+        return primaryDiffEnd;
+    }
 
-    constexpr static const char *secondSimplify = "\\section{\\Large{Упрощение полученного}}\n"
-                                                  "Для получения истинной сути выражения, необходимо провести упрощение "
-                                                  "которое расскроет весь потенциал рассматриваемой зависимости.\n\n";
+    static const char* getSecondSimplify() {
+        if (secondSimplify == nullptr)
+            secondSimplify = readFile("files/secondSimplify.txt");
+        return secondSimplify;
+    }
 
-    constexpr static const char *secondSimplifyEnd = "Полученное выражение несет в себе огромный смысл для численных "
-                                                     "методов изучения топологии пространств.";
+    static const char* getSecondSimplifyEnd() {
+        if (secondSimplifyEnd == nullptr)
+            secondSimplifyEnd = readFile("files/secondSimplifyEnd.txt");
+        return secondSimplifyEnd;
+    }
+
+    static const char* getFullDerivative() {
+        if (fullDerivative == nullptr)
+            fullDerivative = readFile("files/fullDerivative.txt");
+        return fullDerivative;
+    }
+
+    static const char* getFullDerivativeSimplify() {
+        if (fullDerivativeSimplify == nullptr)
+            fullDerivativeSimplify = readFile("files/fullDerivativeSimplify.txt");
+        return fullDerivativeSimplify;
+    }
+
+    static const char* getFullDerivativeResult() {
+        if (fullDerivativeResult == nullptr)
+            fullDerivativeResult = readFile("files/fullDerivativeResult.txt");
+        return fullDerivativeResult;
+    }
+
+    static const char *primarySimplifyStartCasesRandom() {
+        return primarySimplifyStartCases[rand() % sizeof((primarySimplifyStartCases)) /
+                                         sizeof((primarySimplifyStartCases[0]))];
+    }
+
+    static const char *primarySimplifyEndCasesRandom() {
+        return primarySimplifyEndCases[rand() % sizeof((primarySimplifyEndCases)) /
+                                       sizeof((primarySimplifyEndCases[0]))];
+    }
+
+    static const char *primaryDiffStartCasesRandom() {
+        return primaryDiffStartCases[rand() % sizeof((primaryDiffStartCases)) /
+                                     sizeof((primaryDiffStartCases[0]))];
+    }
+
+    static const char *primaryDiffEndCasesRandom() {
+        return primaryDiffEndCases[rand() % sizeof((primaryDiffEndCases)) /
+                                   sizeof((primaryDiffEndCases[0]))];
+    }
 
     constexpr static const char *primarySimplifyStartCases[] = {
             "Проведя простейший анализ элементарного состояния вещества",
@@ -87,10 +101,6 @@ struct LaTEXPhrases {
             "Рассмотрев выражение с позиции n-мерных кубов"
     };
 
-    static const char *primarySimplifyStartCasesRandom() {
-        return primarySimplifyStartCases[rand() % sizeof((primarySimplifyStartCases)) /
-                                         sizeof((primarySimplifyStartCases[0]))];
-    }
 
     constexpr static const char *primarySimplifyEndCases[] = {
             "приходим к эквивалентному выражению",
@@ -100,21 +110,12 @@ struct LaTEXPhrases {
             "выполнив простую подстановку получим выражение"
     };
 
-    static const char *primarySimplifyEndCasesRandom() {
-        return primarySimplifyEndCases[rand() % sizeof((primarySimplifyEndCases)) /
-                                       sizeof((primarySimplifyEndCases[0]))];
-    }
-
     constexpr static const char *primaryDiffStartCases[] = {
             "Необходимо вычислить производную",
             "Для этого вычислим производную",
             "Очевидно, что необходимо вычислить производную",
             "Необходима производная следующего выражения",
     };
-
-    static const char *primaryDiffStartCasesRandom() {
-        return primaryDiffStartCases[rand() % sizeof((primaryDiffStartCases)) / sizeof((primaryDiffStartCases[0]))];
-    }
 
     constexpr static const char *primaryDiffEndCases[] = {
             "которое простейшей операцией преобразуется в",
@@ -123,10 +124,63 @@ struct LaTEXPhrases {
             "легко преобразовывается в",
     };
 
-    static const char *primaryDiffEndCasesRandom() {
-        return primaryDiffEndCases[rand() % sizeof((primaryDiffEndCases)) / sizeof((primaryDiffEndCases[0]))];
+    static void freeSpace() {
+        freeIfAlocated(docStart);
+        freeIfAlocated(intro);
+        freeIfAlocated(primarySimplify);
+        freeIfAlocated(primarySimplifyEnd);
+        freeIfAlocated(primaryDiff);
+        freeIfAlocated(primaryDiffEnd);
+        freeIfAlocated(secondSimplify);
+        freeIfAlocated(secondSimplifyEnd);
     }
 
+    static char *readFile(const char* name) {
+        FILE* contentFile = fopen(name, "r");
+
+        if (!contentFile) {
+            printf("Can't open file \"%s\"\n", name);
+            return nullptr;
+        }
+
+        fseek(contentFile, 0, SEEK_END);
+        size_t fsize = ftell(contentFile);
+        fseek(contentFile, 0, SEEK_SET);
+
+        char* content = static_cast<char*>(calloc(fsize + 1, sizeof(char)));
+        fread(content, 1, fsize, contentFile);
+        fclose(contentFile);
+
+        return content;
+    }
+private:
+    static void freeIfAlocated(void* ptr){
+        if (!ptr) return;
+        free(ptr);
+    }
+    static char* docStart;
+    static char* intro;
+    static char* primarySimplify;
+    static char* primarySimplifyEnd;
+    static char* primaryDiff;
+    static char* primaryDiffEnd;
+    static char* secondSimplify;
+    static char* secondSimplifyEnd;
+    static char* fullDerivative;
+    static char* fullDerivativeResult;
+    static char* fullDerivativeSimplify;
 };
+
+char* LaTEXPhrases::docStart              = nullptr;
+char* LaTEXPhrases::intro                 = nullptr;
+char* LaTEXPhrases::primarySimplify       = nullptr;
+char* LaTEXPhrases::primarySimplifyEnd    = nullptr;
+char* LaTEXPhrases::primaryDiff           = nullptr;
+char* LaTEXPhrases::primaryDiffEnd        = nullptr;
+char* LaTEXPhrases::secondSimplify        = nullptr;
+char* LaTEXPhrases::secondSimplifyEnd     = nullptr;
+char* LaTEXPhrases::fullDerivative        = nullptr;
+char* LaTEXPhrases::fullDerivativeResult  = nullptr;
+char* LaTEXPhrases::fullDerivativeSimplify  = nullptr;
 
 #endif //DIFFERENTIATOR_LATEXPHRASES_H

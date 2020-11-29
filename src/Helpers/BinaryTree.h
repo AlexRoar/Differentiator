@@ -15,22 +15,22 @@ class BinaryTree {
     BinaryTree *right;
 
     void dumpRecursive(FILE *output) const {
-        fprintf(output, "node%p[label=\"", this);
         switch (value.getType()) {
             case TP_CST: {
-                fprintf(output, "%lg", value.getConst());
+                fprintf(output, "node%p[label=\"%lg\" fillcolor=lightgreen style=filled", this, value.getConst());
                 break;
             }
             case TP_OPR: {
-                fprintf(output, "%s", value.getOperator().toString());
+                fprintf(output, "node%p[label=\"%s\" shape=invhouse fillcolor=aliceblue style=filled",
+                        this, value.getOperator().toString());
                 break;
             }
             case TP_VAR: {
-                fprintf(output, "%c", value.getVar());
+                fprintf(output, "node%p[label=\"%c\" fillcolor=pink style=filled", this, value.getVar());
                 break;
             }
         }
-        fprintf(output, "\"]\n");
+        fprintf(output, "]\n");
         if (left) {
             fprintf(output, "node%p->node%p\n", this, left);
             left->dumpRecursive(output);
@@ -122,14 +122,17 @@ public:
         return newCopy;
     }
 
-    void dumpGraph() const {
-        FILE *tmpGr = fopen("graph.gv", "w");
+    void dumpGraph(const char *fileOut = "output/graph.svg") const {
+        const int MAX_LEN = 255;
+        FILE *tmpGr = fopen("output/graph.gv", "w");
         fprintf(tmpGr, "digraph expr{\n");
         this->dumpRecursive(tmpGr);
         fprintf(tmpGr, "}\n");
         fclose(tmpGr);
 
-        system("dot -Tsvg graph.gv -o graph.svg");
+        char command[MAX_LEN] = {};
+        sprintf(command, "dot -Tsvg output/graph.gv -o %s", fileOut);
+        system(command);
     }
 
     bool deepCompare(const BinaryTree *other) {

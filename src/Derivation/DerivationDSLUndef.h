@@ -16,6 +16,7 @@
 #undef LOG
 #undef SIN
 #undef COS
+#undef EXP
 
 #undef DOUBLE_NODE
 #undef LA_DUMPED

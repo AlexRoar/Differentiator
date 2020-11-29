@@ -32,7 +32,7 @@ namespace InfixParser {
             case '+':
                 return SIMPLE_OP(OP_ADD);
             case '^':
-                return SIMPLE_OP(OP_EXP);
+                return SIMPLE_OP(OP_POW);
             case '(':
                 return SIMPLE_OP(OP_LPA);
             case ')':
@@ -53,42 +53,40 @@ namespace InfixParser {
                     input += offset;
                     return (retValue.cTor(constant), retValue);
                 }
-                else SIMPLE_FUNC(sin, OP_SIN);
-                else SIMPLE_FUNC(cos, OP_COS);
-                else SIMPLE_FUNC(ctg, OP_CTG);
-                else SIMPLE_FUNC(log, OP_LOG);
-                else SIMPLE_FUNC(tan, OP_TAN);
-                else SIMPLE_FUNC(arctan, OP_ATAN);
-                else SIMPLE_FUNC(arccot, OP_ACTG);
-                else SIMPLE_FUNC(arcsin, OP_ASIN);
-                else SIMPLE_FUNC(arccos, OP_ACOS);
+#define DEF_FUNC(OP_CODE, string, latex, eval, derivative) else SIMPLE_FUNC(string, OP_CODE);
+#include <Syntax/Syntax.h>
+#undef DEF_FUNC
                 return (retValue.cTor(*input), input += 1, retValue);
             }
         }
     }
 
-    static ClassicStack<ExprNode> tokenize(char *input) {
-        ClassicStack<ExprNode> tokens {};
-        tokens.cTor(10);
+    static ClassicStack<ExprNode>* tokenize(char *input) {
+        auto* tokens = ClassicStack<ExprNode>::New();
+        tokens->cTor(10);
         while (true) {
             ExprNode newToken = fetchToken(input);
-            tokens.push(newToken);
+            tokens->push(newToken);
             if (*input == '\0')
                 break;
         }
         return tokens;
     }
 
-    static BinaryTree<ExprNode> *parseExpression(char *input) {
-        ClassicStack<ExprNode> entities = tokenize(input);
+    static BinaryTree<ExprNode> *parseExpression(char *input, ClassicStack<ExprNode>**tokenizeRes=nullptr) {
+        ClassicStack<ExprNode>* entities = tokenize(input);
         auto outputList = SwiftyList<ExprNode>(10, 0, nullptr, false);
+
+        if (tokenizeRes) {
+            *tokenizeRes = entities;
+        }
 
         ClassicStack<ExprNode> operatorStack {};
         operatorStack.cTor(10);
 
-        auto *tokensStorage = entities.getStorage();
+        auto *tokensStorage = entities->getStorage();
 
-        for (size_t i = 0; i < entities.getSize(); i++) {
+        for (size_t i = 0; i < entities->getSize(); i++) {
             ExprNode currentToken = tokensStorage[i];
             switch (currentToken.getType()) {
                 case TP_CST:
@@ -143,7 +141,9 @@ namespace InfixParser {
             outputList.pushBack(popped);
         }
         operatorStack.dTor();
-        entities.dTor();
+        if (!tokenizeRes) {
+            ClassicStack<ExprNode>::Delete(entities);
+        }
 
         ClassicStack<BinaryTree<ExprNode> *> converter {};
         converter.cTor(10);

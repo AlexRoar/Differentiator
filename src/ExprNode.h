@@ -18,18 +18,12 @@ enum ExprOperatorCode {
     OP_ADD  ,
     OP_DIV  ,
     OP_MUL  ,
-    OP_EXP  ,
-    OP_SIN  ,
-    OP_COS  ,
-    OP_TAN  ,
-    OP_CTG  ,
-    OP_LOG  ,
+    OP_POW  ,
+#define DEF_FUNC(OP_CODE, string, latex, eval, derivative) OP_CODE ,
+#include <Syntax/Syntax.h>
+#undef DEF_FUNC
     OP_LPA  ,
     OP_RPA  ,
-    OP_ATAN ,
-    OP_ACOS ,
-    OP_ASIN ,
-    OP_ACTG ,
 };
 
 enum ExprOperatorType {
@@ -82,22 +76,17 @@ public:
                 opType = OP_T_OPER;
                 break;
             }
-            case OP_EXP: {
+            case OP_POW: {
                 assoc = ASSOC_RIGHT;
                 precedence = 4;
                 argsCount = 2;
                 opType = OP_T_OPER;
                 break;
             }
-            case OP_SIN:
-            case OP_COS:
-            case OP_TAN:
-            case OP_CTG:
-            case OP_ATAN:
-            case OP_ACOS:
-            case OP_ASIN:
-            case OP_ACTG:
-            case OP_LOG: {
+#define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE:
+#include <Syntax/Syntax.h>
+#undef DEF_FUNC
+            {
                 assoc = ASSOC_NONE;
                 precedence = 5;
                 argsCount = 1;
@@ -151,30 +140,15 @@ public:
                 return "*";
             case OP_DIV:
                 return "/";
-            case OP_EXP:
+            case OP_POW:
                 return "^";
-            case OP_SIN:
-                return "sin";
-            case OP_COS:
-                return "cos";
-            case OP_TAN:
-                return "tan";
-            case OP_CTG:
-                return "ctg";
-            case OP_LOG:
-                return "log";
+#define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE: return #string ;
+#include <Syntax/Syntax.h>
+#undef DEF_FUNC
             case OP_RPA:
                 return "(";
             case OP_LPA:
                 return ")";
-            case OP_ATAN:
-                return "arctan";
-            case OP_ACOS:
-                return "arccos";
-            case OP_ASIN:
-                return "arcsin";
-            case OP_ACTG:
-                return "arccot";
         }
     }
 

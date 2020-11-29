@@ -30,7 +30,7 @@ struct DerivativeRule {
                     ),
                     POW(cR, CONST(2))
             ));
-            case OP_EXP: LA_DUMPED(ADD(
+            case OP_POW: LA_DUMPED(ADD(
                     MUL(
                             MUL(cR,
                                 POW(cL,
@@ -44,24 +44,11 @@ struct DerivativeRule {
                                     LOG(cL)),
                             dR)
             ));
-            case OP_SIN: LA_DUMPED(MUL(COS(cR), dR));
-            case OP_COS: LA_DUMPED(MUL(CONST(-1), MUL(SIN(cR), dR)));
-            case OP_TAN: LA_DUMPED(MUL(DIV(
-                    CONST(1),
-                    POW(COS(cR),
-                        CONST(2)
-                    )
-            ), dR));
-            case OP_CTG: LA_DUMPED(MUL(DIV(
-                    CONST(-1),
-                    POW(COS(cR), CONST(2))
-                                       ),
-                                       dR));
-            case OP_LOG:  LA_DUMPED(MUL(DIV(CONST(1), cR), dR));
-            case OP_ATAN: LA_DUMPED(MUL(DIV(CONST(1), ADD(CONST(1), POW(cR, CONST(2)))), dR));
-            case OP_ACOS: LA_DUMPED(MUL(DIV(CONST(-1), POW(SUB(CONST(1), POW(cR, CONST(2))), CONST(0.5))), dR));
-            case OP_ASIN: LA_DUMPED(MUL(DIV(CONST(1), POW(SUB(CONST(1), POW(cR, CONST(2))), CONST(0.5))), dR));
-            case OP_ACTG: LA_DUMPED(MUL(DIV(CONST(-1), ADD(CONST(1), POW(cR, CONST(2)))), dR));
+#define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE: LA_DUMPED(derivative);
+
+#include <Syntax/Syntax.h>
+
+#undef DEF_FUNC
             default: {
                 printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__);
                 return CONST(0);
@@ -78,7 +65,7 @@ struct DerivativeRule {
     }
 
     static BinaryTree<ExprNode> *pow(BinaryTree<ExprNode> *L, BinaryTree<ExprNode> *R) {
-        DOUBLE_NODE(OP_EXP)
+        DOUBLE_NODE(OP_POW)
     }
 
     static BinaryTree<ExprNode> *mul(BinaryTree<ExprNode> *L, BinaryTree<ExprNode> *R) {
@@ -90,11 +77,11 @@ struct DerivativeRule {
     }
 
     static BinaryTree<ExprNode> *log(BinaryTree<ExprNode> *R) {
-        auto *newNode = BinaryTree<ExprNode>::New();
-        ExprNode nodeVal {};
-        nodeVal.cTor(OP_LOG);
-        newNode->cTor(nodeVal, nullptr, R);
-        return newNode;
+        SINGLE_NODE(OP_LOG)
+    }
+
+    static BinaryTree<ExprNode> *exp(BinaryTree<ExprNode> *R) {
+        SINGLE_NODE(OP_EXP)
     }
 
     static BinaryTree<ExprNode> *constVal(double val) {
@@ -106,19 +93,19 @@ struct DerivativeRule {
     }
 
     static BinaryTree<ExprNode> *sin(BinaryTree<ExprNode> *R) {
-        auto *newNode = BinaryTree<ExprNode>::New();
-        ExprNode nodeVal {};
-        nodeVal.cTor(OP_SIN);
-        newNode->cTor(nodeVal, nullptr, R);
-        return newNode;
+        SINGLE_NODE(OP_SIN)
     }
 
     static BinaryTree<ExprNode> *cos(BinaryTree<ExprNode> *R) {
-        auto *newNode = BinaryTree<ExprNode>::New();
-        ExprNode nodeVal {};
-        nodeVal.cTor(OP_COS);
-        newNode->cTor(nodeVal, nullptr, R);
-        return newNode;
+        SINGLE_NODE(OP_COS)
+    }
+
+    static BinaryTree<ExprNode> *cosh(BinaryTree<ExprNode> *R) {
+        SINGLE_NODE(OP_COSH)
+    }
+
+    static BinaryTree<ExprNode> *sinh(BinaryTree<ExprNode> *R) {
+        SINGLE_NODE(OP_SINH)
     }
 
     static void latexDump(FILE *output, BinaryTree<ExprNode> *node) {

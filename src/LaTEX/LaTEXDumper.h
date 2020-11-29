@@ -32,6 +32,7 @@ namespace LaTEXDumper {
         }
         if (paranthesis)
             fprintf(output, "\\left(");
+
         switch (head->getVal().getOperator().getCode()) {
             case OP_SUB: {
                 dumpTree(output, head->getLeft(), EXPECT_OPERATOR_LOWER(head->getRight(), OP_SUB));
@@ -65,77 +66,31 @@ namespace LaTEXDumper {
                 }
                 break;
             }
-            case OP_EXP: {
+            case OP_POW: {
                 EvaluatorRes rightVal = Evaluator::eval(head->getRight(), true);
                 if (rightVal.res == 0.5 && rightVal.status == EV_OK) {
                     fprintf(output, "\\sqrt{");
-                    dumpTree(output, head->getLeft(), EXPECT_OPERATOR_LOWER(head->getLeft(), OP_EXP));
+                    dumpTree(output, head->getLeft(), false);
                     fprintf(output, "}");
-                    if (paranthesis)
-                        fprintf(output, "\\right)");
                 } else {
                     fprintf(output, "{");
-                    dumpTree(output, head->getLeft(), EXPECT_OPERATOR_LOWER(head->getLeft(), OP_EXP));
+                    fprintf(output, "\\left(");
+                    dumpTree(output, head->getLeft(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getLeft(), OP_POW));
+                    fprintf(output, "\\right)");
                     fprintf(output, "}^{");
-                    dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER(head->getRight(), OP_EXP));
+                    dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_POW));
                     fprintf(output, "}");
                 }
                 break;
             }
-            case OP_SIN: {
-                fprintf(output, "\\sin{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_SIN));
-                fprintf(output, "}");
-                break;
-            }
-            case OP_COS: {
-                fprintf(output, "\\cos{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_COS));
-                fprintf(output, "}");
-                break;
-            }
-            case OP_TAN: {
-                fprintf(output, "\\tan{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_TAN));
-                fprintf(output, "}");
-                break;
-            }
-            case OP_CTG: {
-                fprintf(output, "\\cot{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_CTG));
-                fprintf(output, "}");
-                break;
-            }
-            case OP_LOG: {
-                fprintf(output, "\\log{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_LOG));
-                fprintf(output, "}");
-                break;
-            }
-            case OP_ATAN: {
-                fprintf(output, "\\arctan{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_ATAN));
-                fprintf(output, "}");
-                break;
-            }
-            case OP_ACOS: {
-                fprintf(output, "\\arccos{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_ACOS));
-                fprintf(output, "}");
-                break;
-            }
-            case OP_ASIN: {
-                fprintf(output, "\\arcsin{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_ASIN));
-                fprintf(output, "}");
-                break;
-            }
-            case OP_ACTG: {
-                fprintf(output, "\\arccot{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_ACTG));
-                fprintf(output, "}");
-                break;
-            }
+#define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE: {                                   \
+                fprintf(output, "\\" #latex "{");                                                             \
+                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_CODE));   \
+                fprintf(output, "}");                                                                         \
+                break;                                                                                        \
+}
+#include <Syntax/Syntax.h>
+#undef DEF_FUNC
             default: {
                 printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__);
                 return;
@@ -146,21 +101,8 @@ namespace LaTEXDumper {
     }
 
     void dumpDocStart(FILE *output) {
-        fprintf(output, "\\documentclass[11pt, oneside]{article}\n"
-                        "\\usepackage{amsmath,amsthm,amssymb}\n"
-                        "\\usepackage{mathtext}\n"
-                        "\\usepackage[T1,T2A]{fontenc}\n"
-                        "\\usepackage[utf8]{inputenc}\n"
-                        "\\usepackage[english,bulgarian,ukrainian,russian]{babel}\n"
-                        "\\usepackage{algorithm2e}\n"
-                        "\\usepackage{indentfirst}\n"
-                        "\\setlength{\\parindent}{15pt}"
-                        "\\usepackage{mathtools}"
-                        "\\usepackage[a4paper, total={6in, 10in}]{geometry}\n"
-                        "\\newcommand\\ddfrac[2]{\\frac{\\displaystyle #1}{\\displaystyle #2}}"
-                        "\\begin{document}");
-        fprintf(output, "%s", LaTEXPhrases::docStart);
-        fprintf(output, "%s", LaTEXPhrases::intro);
+        fprintf(output, "%s", LaTEXPhrases::getDocStart());
+        fprintf(output, "%s", LaTEXPhrases::getIntro());
     }
 
     void dumpDocEnd(FILE *output) {
@@ -181,6 +123,13 @@ namespace LaTEXDumper {
         fprintf(output, "\\[");
         dumpTree(output, head, false);
         fprintf(output, "\\]");
+    }
+
+    void dumpPartial(FILE *output, BinaryTree<ExprNode> *head, char var) {
+        if (!output)
+            return;
+        dumpTree(output, head, true);
+        fprintf(output, " d%c", var);
     }
 
     void dumpDiffResult(FILE *output, char *input, BinaryTree<ExprNode> *head, char var = 'x') {

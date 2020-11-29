@@ -19,6 +19,9 @@
 #define LOG(L)    log(L)
 #define SIN(L)    sin(L)
 #define COS(L)    cos(L)
+#define EXP(L)    exp(L)
+#define SINH(L)   sinh(L)
+#define COSH(L)   cosh(L)
 
 #define DOUBLE_NODE(VAL) {                      \
     auto* newNode = BinaryTree<ExprNode>::New();\
@@ -26,6 +29,14 @@
     nodeVal.cTor(VAL);                          \
     newNode->cTor(nodeVal, L, R);               \
     return newNode;                             \
+}
+
+#define SINGLE_NODE(VAL) {                       \
+    auto *newNode = BinaryTree<ExprNode>::New(); \
+    ExprNode nodeVal {};                         \
+    nodeVal.cTor(VAL);                           \
+    newNode->cTor(nodeVal, nullptr, R);          \
+    return newNode;                              \
 }
 
 #define LA_DUMPED(expr) {   LaTEXDumper::rawWrite(laFile, LaTEXPhrases::primaryDiffStartCasesRandom()); \

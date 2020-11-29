@@ -1,13 +1,30 @@
 #include <cstdio>
 #include "Derivation/Differentiator.h"
 
-// TODO: compare trees
-int main() {
-    FILE *file = fopen("latex.tex", "w");
 
-    Differentiator::ArticleGenerator(file, "(x^2 + 17 * x + x^x + arctan(x^x) ^ x + cos(89 * x - 3))^(sin(x) * x ^ 3)");
+int main() {
+    const int maxExprLen = 2048;
+    FILE *file = fopen("output/latex.tex", "w");
+
+    printf("Enter file name:\n> [expr.txt] ");
+
+    char *fileName = static_cast<char *>(calloc(maxExprLen, sizeof(char)));
+    scanf("%s", fileName);
+
+    if (fileName[0] == 'y' && fileName[1] == '\0'){
+        strcpy(fileName, "expr.txt");
+    }
+
+    char *expression = LaTEXPhrases::readFile(fileName);
+    if (expression == nullptr)
+        return EXIT_FAILURE;
+
+    free(fileName);
+
+    Differentiator::ArticleGenerator(file, expression);
 
     fclose(file);
-    system("pdflatex -output-format=pdf latex.tex");
+    free(expression);
+    system("pdflatex -output-directory output/ -output-format=pdf output/latex.tex");
     return 0;
 }
