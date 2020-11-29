@@ -1,0 +1,15 @@
+digraph expr{
+node0x7fb73dc06bd0[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fb73dc06bd0->node0x7fb73dc06b70
+node0x7fb73dc06b70[label="-" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fb73dc06b70->node0x7fb73dc06450
+node0x7fb73dc06450[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fb73dc06450->node0x7fb73dc06130
+node0x7fb73dc06130[label="2" fillcolor=lightgreen style=filled]
+node0x7fb73dc06450->node0x7fb73dc06160
+node0x7fb73dc06160[label="x" fillcolor=pink style=filled]
+node0x7fb73dc06b70->node0x7fb73dc06ae0
+node0x7fb73dc06ae0[label="y" fillcolor=pink style=filled]
+node0x7fb73dc06bd0->node0x7fb73dc06ba0
+node0x7fb73dc06ba0[label="1" fillcolor=lightgreen style=filled]
+}
