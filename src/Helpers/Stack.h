@@ -59,8 +59,10 @@ public:
         size = 0;
     }
 
-    Elem top() {
-        return this->data[size - 1];
+    Elem* top() {
+        if (size == 0)
+            return nullptr;
+        return &(this->data[size - 1]);
     }
 
     Elem *getStorage() {
@@ -69,6 +71,10 @@ public:
 
     size_t getSize() {
         return size;
+    }
+
+    bool isEmpty(){
+        return size == 0;
     }
 };
 

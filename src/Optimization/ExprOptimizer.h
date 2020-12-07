@@ -9,26 +9,7 @@
 #include <ExprNode.h>
 #include <Evaluation/Evaluator.h>
 #include <Optimization/SpecificOptimizers.h>
-
-#define EVAL_L Evaluator::eval(head->getLeft(), evalMath)
-#define EVAL_R Evaluator::eval(head->getRight(), evalMath)
-
-#define EXPECT_EVAL_R_EQ(val) (evalR.status == EV_OK && evalR.res == val)
-#define EXPECT_EVAL_L_EQ(val) (evalL.status == EV_OK && evalL.res == val)
-
-#define LA_DUMPED(code) { \
-                            unsigned before = changed; \
-                            BinaryTree<ExprNode>* copy = head->deepCopy();      \
-                            {code}                    \
-                            if (before != changed){    \
-                                LaTEXDumper::rawWrite(laFile, LaTEXPhrases::primarySimplifyStartCasesRandom()); \
-                                LaTEXDumper::dumpTreeBlock(laFile, copy);       \
-                                LaTEXDumper::rawWrite(laFile, LaTEXPhrases::primarySimplifyEndCasesRandom()); \
-                                LaTEXDumper::dumpTreeBlock(laFile, head);       \
-                            }\
-                            BinaryTree<ExprNode>::Delete(copy);\
-                            break;  \
-                        }
+#include <Optimization/OptimiserDSL.h>
 
 class ExprOptimizer {
     BinaryTree<ExprNode> *structure;
@@ -128,10 +109,15 @@ public:
         return thou;
     }
 
-    void simplify(bool evalMath = false, FILE *laFile = nullptr) {
+    void simplify(bool evalMath = false, FILE *laFile = nullptr, unsigned timeout = 0) {
         unsigned changes = convConsts(structure, evalMath, laFile) + convTrivialExpr(structure, evalMath, laFile);
-        while (changes) {
+        bool mod = true;
+        if (timeout == 0)
+            mod = false;
+        while (changes && (timeout != 0 || !mod)) {
             changes = convConsts(structure, evalMath, laFile) + convTrivialExpr(structure, evalMath, laFile);
+            if (mod)
+                timeout--;
         }
     }
 

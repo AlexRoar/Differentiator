@@ -16,16 +16,25 @@
 #define EXPECT_OP(node, OP) (((node) ->getVal().getType() == TP_OPR) && ((node) ->getVal().getOperator().getCode() == OP))
 
 namespace SpecificOptimizers {
+    static void
+    headRedefine(BinaryTree<ExprNode> *&head, BinaryTree<ExprNode> *newHead){
+        auto* prevHead = head;
+        head = newHead;
+        prevHead->setLeft(nullptr);
+        prevHead->setRight(nullptr);
+        BinaryTree<ExprNode>::Delete(prevHead);
+    }
+
     static unsigned
     mulOptimizer(BinaryTree<ExprNode> *&head, EvaluatorRes evalL, EvaluatorRes evalR, bool evalMath = false) {
         unsigned changed = 0;
         if (EXPECT_EVAL_R_EQ(1)) {
             BinaryTree<ExprNode>::Delete(head->getRight());
-            head = head->getLeft();
+            headRedefine(head, head->getLeft());
             changed += 1;
         } else if (EXPECT_EVAL_L_EQ(1)) {
             BinaryTree<ExprNode>::Delete(head->getLeft());
-            head = head->getRight();
+            headRedefine(head, head->getRight());
             changed += 1;
         } else if (EXPECT_EVAL_R_EQ(0) || EXPECT_EVAL_L_EQ(0)) {
             ExprNode newVal {};
@@ -61,7 +70,8 @@ namespace SpecificOptimizers {
                     headLeftLeft.cTor(evalLL.res);
                     BinaryTree<ExprNode>::Delete(head->getRight());
                     BinaryTree<ExprNode>::Delete(head->getLeft()->getLeft());
-                    head = head->getLeft();
+                    headRedefine(head, head->getLeft());
+
 
                     auto *newLeft = BinaryTree<ExprNode>::New();
                     ExprNode headLeftNew {};
@@ -82,7 +92,8 @@ namespace SpecificOptimizers {
                     headLeftRight.cTor(evalLR.res);
                     BinaryTree<ExprNode>::Delete(head->getRight());
                     BinaryTree<ExprNode>::Delete(head->getLeft()->getRight());
-                    head = head->getLeft();
+                    headRedefine(head, head->getLeft());
+
 
                     auto *newRight = BinaryTree<ExprNode>::New();
                     ExprNode headRightNew {};
@@ -117,7 +128,7 @@ namespace SpecificOptimizers {
                     headRightLeft.cTor(evalRL.res);
                     BinaryTree<ExprNode>::Delete(head->getLeft());
                     BinaryTree<ExprNode>::Delete(head->getRight()->getLeft());
-                    head = head->getRight();
+                    headRedefine(head, head->getRight());
 
                     auto *newLeft = BinaryTree<ExprNode>::New();
                     ExprNode headLeftNew {};
@@ -138,7 +149,7 @@ namespace SpecificOptimizers {
                     headRightRight.cTor(evalRR.res);
                     BinaryTree<ExprNode>::Delete(head->getLeft());
                     BinaryTree<ExprNode>::Delete(head->getRight()->getRight());
-                    head = head->getRight();
+                    headRedefine(head, head->getRight());
 
                     auto *newRight = BinaryTree<ExprNode>::New();
                     ExprNode headRightNew {};
@@ -172,11 +183,11 @@ namespace SpecificOptimizers {
         }
 
             /*
-            *          (*)              (^)
-            *         /   \            /   \
-            *       (^)   (t)  ->    (t)   (+)
-            *      /   \                  /   \
-            *    (t)  (pow)            (pow)  (1)
+            *          (*)               (*)              (^)
+            *         /   \             /   \            /   \
+            *       (^)   (t)  ->     (^)  (del)  ->    (t)   (+)
+            *      /   \             /   \                   /   \
+            *    (t)  (pow)        (t)  (pow)              (pow)  (1)
             */
         else if (EXPECT_OP(head->getLeft(), OP_POW)) {
             if (head->getLeft()->getLeft()->deepCompare(head->getRight())) {
@@ -186,6 +197,7 @@ namespace SpecificOptimizers {
                 ExprNode headRightNew {};
                 headRightNew.cTor(OP_ADD);
                 nR->cTor(headRightNew);
+
                 nR->setLeft(head->getLeft()->getRight());
 
                 BinaryTree<ExprNode> *nRR = BinaryTree<ExprNode>::New();
@@ -271,11 +283,13 @@ namespace SpecificOptimizers {
         unsigned changed = 0;
         if (EXPECT_EVAL_R_EQ(0)) {
             BinaryTree<ExprNode>::Delete(head->getRight());
-            head = head->getLeft();
+            headRedefine(head, head->getLeft());
+
             changed += 1;
         } else if (EXPECT_EVAL_L_EQ(0)) {
             BinaryTree<ExprNode>::Delete(head->getLeft());
-            head = head->getRight();
+            headRedefine(head, head->getRight());
+
             changed += 1;
         }
 
@@ -304,7 +318,8 @@ namespace SpecificOptimizers {
                     headLeftLeft.cTor(evalLL.res);
                     BinaryTree<ExprNode>::Delete(head->getRight());
                     BinaryTree<ExprNode>::Delete(head->getLeft()->getLeft());
-                    head = head->getLeft();
+
+                    headRedefine(head, head->getLeft());
 
                     auto *newLeft = BinaryTree<ExprNode>::New();
                     ExprNode headLeftNew {};
@@ -325,7 +340,8 @@ namespace SpecificOptimizers {
                     headLeftRight.cTor(evalLR.res);
                     BinaryTree<ExprNode>::Delete(head->getRight());
                     BinaryTree<ExprNode>::Delete(head->getLeft()->getRight());
-                    head = head->getLeft();
+
+                    headRedefine(head, head->getLeft());
 
                     auto *newRight = BinaryTree<ExprNode>::New();
                     ExprNode headRightNew {};
@@ -360,7 +376,8 @@ namespace SpecificOptimizers {
                     headRightLeft.cTor(evalRL.res);
                     BinaryTree<ExprNode>::Delete(head->getLeft());
                     BinaryTree<ExprNode>::Delete(head->getRight()->getLeft());
-                    head = head->getRight();
+
+                    headRedefine(head, head->getRight());
 
                     auto *newLeft = BinaryTree<ExprNode>::New();
                     ExprNode headLeftNew {};
@@ -381,7 +398,8 @@ namespace SpecificOptimizers {
                     headRightRight.cTor(evalRR.res);
                     BinaryTree<ExprNode>::Delete(head->getLeft());
                     BinaryTree<ExprNode>::Delete(head->getRight()->getRight());
-                    head = head->getRight();
+
+                    headRedefine(head, head->getRight());
 
                     auto *newRight = BinaryTree<ExprNode>::New();
                     ExprNode headRightNew {};
@@ -424,29 +442,35 @@ namespace SpecificOptimizers {
         unsigned changed = 0;
         if (EXPECT_EVAL_R_EQ(1)) {
             BinaryTree<ExprNode>::Delete(head->getRight());
-            head = head->getLeft();
+            headRedefine(head, head->getLeft());
+
             changed += 1;
         }
 
-        /*   (nLL / nLR) / nR -> (nLL * nR) / nLR
-         *          (/)                (/)
-         *         /   \              /   \
-         *       (/)   (nR)   ->    (*)   (nLR)
-         *      /   \              /   \
-         *   (nLL)  (nLR)       (nLL)  (nR)
+        /*   (nLL / nLR) / nR -> (nLL) / nLR * nR
+         *          (/)                  (/)
+         *         /   \                /    \
+         *       (/)   (nR)   ->     (nLL)   (*)
+         *      /   \                       /   \
+         *   (nLL)  (nLR)                 (nLR)  (nR)
+
          */
         if (head->getLeft()) {
             if (EXPECT_OP(head->getLeft(), OP_DIV)) {
                 BinaryTree<ExprNode> *nLR = head->getLeft()->getRight();
                 BinaryTree<ExprNode> *nLL = head->getLeft()->getLeft();
-                BinaryTree<ExprNode> *nR = head->getRight();
+                BinaryTree<ExprNode> *nR  = head->getRight();
+                BinaryTree<ExprNode> *nL  = head->getLeft();
 
                 ExprNode newOp {};
                 newOp.cTor(OP_MUL);
-                head->getLeft()->cTor(newOp);
-                head->getLeft()->setLeft(nLL);
-                head->getLeft()->setRight(nR);
-                head->setRight(nLR);
+                nL->cTor(newOp);
+                nL->setLeft(nLR);
+                nL->setRight(nR);
+
+                head->setLeft(nLL);
+                head->setRight(nL);
+
                 changed++;
             }
         }
@@ -484,7 +508,8 @@ namespace SpecificOptimizers {
         unsigned changed = 0;
         if (EXPECT_EVAL_R_EQ(0)) {
             BinaryTree<ExprNode>::Delete(head->getRight());
-            head = head->getLeft();
+            headRedefine(head, head->getLeft());
+
             changed += 1;
         }
         return changed;
@@ -495,7 +520,8 @@ namespace SpecificOptimizers {
         unsigned changed = 0;
         if (EXPECT_EVAL_R_EQ(1)) {
             BinaryTree<ExprNode>::Delete(head->getRight());
-            head = head->getLeft();
+            headRedefine(head, head->getLeft());
+
             changed += 1;
         } else if (EXPECT_EVAL_R_EQ(0)) {
             ExprNode newVal {};

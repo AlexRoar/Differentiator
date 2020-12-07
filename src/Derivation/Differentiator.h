@@ -37,7 +37,8 @@ namespace Differentiator {
                 continue;
             if (laFile)
                 fprintf(laFile, "\\textbf{Рассчитаем частную производную} $$\\frac{\\partial f}{\\partial %c} $$", char(i + 'a'));
-            result[varCounter++] = DerivativeRule::derivative(structure, char(i + 'a'), laFile);
+            result[varCounter] = DerivativeRule::derivative(structure, char(i + 'a'), laFile);
+            varCounter++;
         }
         return result;
     }
@@ -62,10 +63,20 @@ namespace Differentiator {
                 continue;
             if (varCounter != 0)
                 fprintf(output, " + ");
-            LaTEXDumper::dumpPartial(output, partialDerivatives[varCounter++], char(i + 'a'));
-
+            LaTEXDumper::dumpPartial(output, partialDerivatives[varCounter], char(i + 'a'));
+            varCounter++;
         }
         fprintf(output, "\\]");
+    }
+
+    static void dumpGraphFullDerivative(FILE *output, const char *vars, BinaryTree<ExprNode> **partialDerivatives) {
+        size_t varCounter = 0;
+        for(unsigned i = 0; i < variablesMaxNum; ++i) {
+            if (vars[i] == 0)
+                continue;
+            LaTEXDumper::dumpGraph(output, partialDerivatives[varCounter], char(i + 'a'));
+            varCounter++;
+        }
     }
 
     static BinaryTree<ExprNode> ** fullDerivativeSimplify(BinaryTree<ExprNode> **partialDerivatives, size_t varNum, FILE *laDumped=nullptr) {
@@ -81,6 +92,13 @@ namespace Differentiator {
         return result;
     }
 
+    void deleteFullDerivative(BinaryTree<ExprNode> **pTree, size_t num) {
+        for(unsigned i = 0; i < num; ++i) {
+            ExprOptimizer optimizer {};
+            BinaryTree<ExprNode>::Delete(pTree[i]);
+        }
+    }
+
     void ArticleGenerator(FILE *output, char *content) {
         LaTEXDumper::dumpDocStart(output);
 
@@ -92,55 +110,103 @@ namespace Differentiator {
             return;
         }
 
+        /*
+         * Parsed structure dump
+         */
         LaTEXDumper::dumpTreeBlock(output, graph);
-        graph->dumpGraph("parsed.svg");
-
+        LaTEXDumper::dumpGraph(output, graph);
         LaTEXDumper::rawWrite(output, LaTEXPhrases::getPrimarySimplify());
+        graph->dumpGraph("parsed.svg");
+        // ==============================================================
 
-        ExprOptimizer optimizer {};
-        optimizer.cTor(graph);
+        /*
+         * Primary optimisation
+         */
+        ExprOptimizer optimizer {}; optimizer.cTor(graph);
+
         optimizer.simplify(false, output);
-
-        LaTEXDumper::rawWrite(output, LaTEXPhrases::getPrimarySimplifyEnd());
-
         graph = optimizer.getStructure();
+        // ==============================================================
+
+        /*
+         * Primary optimisation results dump
+         */
+        LaTEXDumper::rawWrite(output, LaTEXPhrases::getPrimarySimplifyEnd());
         LaTEXDumper::dumpTreeBlock(output, graph);
-        graph->dumpGraph("parsedSimplified.svg");
-
         LaTEXDumper::rawWrite(output, LaTEXPhrases::getPrimaryDiff());
+        graph->dumpGraph("parsedSimplified.svg");
+        // ==============================================================
 
+        /*
+         * Partial derivative by x
+         */
         auto *derived = Differentiator::derivative(graph, 'x', output);
         derived->dumpGraph("derivative.svg");
+        // ==============================================================
+
+        /*
+         * Partial derivative by x dump
+         */
         LaTEXDumper::rawWrite(output, LaTEXPhrases::getPrimaryDiffEnd());
         LaTEXDumper::dumpDiffResult(output, content, derived);
-        optimizer.cTor(derived);
+        // ==============================================================
 
-        LaTEXDumper::rawWrite(output, LaTEXPhrases::getSecondSimplify());
+        /*
+         * Partial derivative by x simplify
+         */
+        optimizer.cTor(derived);
         optimizer.simplify(false, output);
         derived = optimizer.getStructure();
-        derived->dumpGraph("derivativeSimplified.svg");
+        // ==============================================================
+
+        /*
+         * Partial derivative by x simplified dump
+         */
+        LaTEXDumper::rawWrite(output, LaTEXPhrases::getSecondSimplify());
         LaTEXDumper::rawWrite(output, LaTEXPhrases::getSecondSimplifyEnd());
         LaTEXDumper::dumpDiffResult(output, content, derived);
+        LaTEXDumper::dumpGraph(output, derived);
+        derived->dumpGraph("derivativeSimplified.svg");
+        // ==============================================================
 
-        LaTEXDumper::rawWrite(output, LaTEXPhrases::getFullDerivative());
 
+        /*
+         * Find all used variables
+         */
         char *vars = expressionVariables(tokens->getStorage(), tokens->getSize());
-
         size_t varNum = 0;
+
+        /*
+         * Find all partial derivatives
+         */
+        LaTEXDumper::rawWrite(output, LaTEXPhrases::getFullDerivative());
         BinaryTree<ExprNode> **partialDerivatives = derivativeFull(initialGraph, vars, varNum, output);
+        // ==============================================================
 
+        /*
+         * Dump all partial derivatives
+         */
         dumpFullDerivative(output, vars, partialDerivatives);
-
         LaTEXDumper::rawWrite(output, LaTEXPhrases::getFullDerivativeSimplify());
 
+        /*
+         * Partial derivatives simplify
+         */
         BinaryTree<ExprNode> **partialDerivativesSimplified = fullDerivativeSimplify(partialDerivatives, varNum, output);
 
+        /*
+         * Partial derivatives dump
+         */
         LaTEXDumper::rawWrite(output, LaTEXPhrases::getFullDerivativeResult());
         dumpFullDerivative(output, vars, partialDerivativesSimplified);
+        dumpGraphFullDerivative(output, vars, partialDerivativesSimplified);
+        deleteFullDerivative(partialDerivativesSimplified, varNum);
+        // ==============================================================
+        // ==============================================================
 
         free(partialDerivativesSimplified);
         free(partialDerivatives);
-
+        free(vars);
         ClassicStack<ExprNode>::Delete(tokens);
         BinaryTree<ExprNode>::Delete(graph);
         BinaryTree<ExprNode>::Delete(derived);

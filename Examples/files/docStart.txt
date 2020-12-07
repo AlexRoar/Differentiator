@@ -6,13 +6,29 @@
 \usepackage[english,bulgarian,ukrainian,russian]{babel}
 \usepackage{algorithm2e}
 \usepackage{indentfirst}
+\usepackage{misccorr}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{environ}
+
+
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+  \def\tikz@width{#1}%
+  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+  \BODY
+  \end{lrbox}%
+  \pgfmathparse{#1/\wd\measure@tikzpicture}%
+  \edef\tikzscale{\pgfmathresult}%
+  \BODY
+}
+\makeatother
 
 \DeclareMathOperator{\arcsec}{arcsec}
 \DeclareMathOperator{\arccot}{arccot}
 \DeclareMathOperator{\arccsc}{arccsc}
 
-
-\usepackage[a4paper, total={6in, 8in}]{geometry}
 
 \renewcommand\qedsymbol{$\blacksquare$}
 \renewenvironment{proof}{{\bfseries Доказательство:}}{}
@@ -24,7 +40,7 @@
 }
 
 \setlength{\parindent}{15pt}
-
+\pgfplotsset{compat=1.16}
 \begin{document}
 
     \begin{titlepage}
@@ -51,7 +67,7 @@
         \begin{center}
             кандидатская диссертация
         \end{center}
-        \vspace{15em}
+        \vspace{10em}
 
         \vspace{\fill}
 

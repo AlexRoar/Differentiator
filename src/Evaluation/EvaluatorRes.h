@@ -9,10 +9,10 @@
 #include "ExprNode.h"
 
 enum EvalStatus {
-    EV_OK,
-    EV_VAR_NEEDED,
-    EV_MATH_TOK,
-    EV_ERR
+    EV_OK          = 0,
+    EV_VAR_NEEDED  = 1,
+    EV_MATH_TOK    = 2,
+    EV_ERR         = 3
 };
 
 struct EvaluatorRes {

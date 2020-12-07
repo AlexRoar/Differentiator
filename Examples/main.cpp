@@ -3,12 +3,12 @@
 
 
 int main() {
-    const int maxExprLen = 2048;
+    const int maxFNameLen = 2048;
     FILE *file = fopen("output/latex.tex", "w");
 
     printf("Enter file name:\n> [expr.txt] ");
 
-    char *fileName = static_cast<char *>(calloc(maxExprLen, sizeof(char)));
+    char *fileName = static_cast<char *>(calloc(maxFNameLen, sizeof(char)));
     scanf("%s", fileName);
 
     if (fileName[0] == 'y' && fileName[1] == '\0'){
@@ -25,6 +25,7 @@ int main() {
 
     fclose(file);
     free(expression);
+
     system("pdflatex -output-directory output/ -output-format=pdf output/latex.tex");
     return 0;
 }

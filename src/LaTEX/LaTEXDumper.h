@@ -13,12 +13,12 @@
 #include <Evaluation/Evaluator.h>
 
 #define EXPECT_OPERATOR_LOWER(node, op) (node->getVal().getType() == TP_OPR) && \
-                                        (node->getVal().getOperator() < op)  || \
-                                        (node->getVal().getType() != TP_OPR)
+                                        (node->getVal().getOperator() < op)
+
+#define EXPECT_OPERATOR(node) (node->getVal().getType() == TP_OPR)
 
 #define EXPECT_OPERATOR_LOWER_OR_EQ(node, op) (node->getVal().getType() == TP_OPR) && \
-                                              (node->getVal().getOperator() <= op)  || \
-                                              (node->getVal().getType() != TP_OPR)
+                                              (node->getVal().getOperator() <= op)
 namespace LaTEXDumper {
     void dumpTree(FILE *output, BinaryTree<ExprNode> *head, bool paranthesis = true) {
         if (!head)
@@ -48,9 +48,9 @@ namespace LaTEXDumper {
             }
             case OP_DIV: {
                 fprintf(output, "\\frac{");
-                dumpTree(output, head->getLeft(), EXPECT_OPERATOR_LOWER(head->getLeft(), OP_DIV));
+                dumpTree(output, head->getLeft(), false);
                 fprintf(output, "}{");
-                dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER(head->getRight(), OP_DIV));
+                dumpTree(output, head->getRight(), false);
                 fprintf(output, "}");
                 break;
             }
@@ -74,11 +74,9 @@ namespace LaTEXDumper {
                     fprintf(output, "}");
                 } else {
                     fprintf(output, "{");
-                    fprintf(output, "\\left(");
-                    dumpTree(output, head->getLeft(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getLeft(), OP_POW));
-                    fprintf(output, "\\right)");
+                    dumpTree(output, head->getLeft(), EXPECT_OPERATOR(head->getLeft()));
                     fprintf(output, "}^{");
-                    dumpTree(output, head->getRight(), EXPECT_OPERATOR_LOWER_OR_EQ(head->getRight(), OP_POW));
+                    dumpTree(output, head->getRight(), EXPECT_OPERATOR(head->getRight()));
                     fprintf(output, "}");
                 }
                 break;
@@ -148,6 +146,63 @@ namespace LaTEXDumper {
         dumpTree(output, head, false);
         fprintf(output, "\\]");
         dumpDocEnd(output);
+    }
+
+    void dumpGraph(FILE *output, BinaryTree<ExprNode> *head, char varName='x') {
+        const double step = 0.01;
+        const double minX = -10;
+        const double maxX = 10;
+        const double tick = 1;
+
+        fprintf(output, "\\begin{center}"
+                        "\\begin{scaletikzpicturetowidth}{\\textwidth}"
+                        "\\begin{tikzpicture}[scale=\\tikzscale]\n"
+                        "\t\\begin{axis}[\n"
+                        "\t\txlabel = {$%c$},\n"
+                        "\t\tminor tick num = 5\n"
+                        "\t\t]"
+                        "xtick={\n", varName);
+        for (int i = minX; i <= maxX; i+=tick) {
+            fprintf(output, "%d", i);
+            if (i != maxX)
+                fprintf(output, ", ");
+        }
+        fprintf(output, "},\n"
+                        "    ytick={1},\n"
+                        "    legend pos=north west,\n"
+                        "    ymajorgrids=true,\n"
+                        "    grid style=dashed,\n"
+                        "]\n"
+                        "\n"
+                        "\\addplot[\n"
+                        "    color=red,\n"
+                        "    mark=none,\n"
+                        "    ]\n"
+                        "    coordinates {\n");
+
+        double vars[26 * 2] = {};
+        for (double i = minX; i <= maxX; i+=step) {
+            fprintf(output, "(%lf, ", i);
+
+            vars[varName - 'a'] = i;
+            EvaluatorRes res = Evaluator::eval(head, true, true, vars);
+            if (res.status != EV_OK){
+                printf("Error evaluating expression: %d\n", res.status);
+            }
+
+            fprintf(output, "%lf", res.res);
+            fprintf(output, ")\n");
+        }
+        fprintf(output, "\n");
+
+        fprintf(output,
+                        "    };\n"
+                        "    \\legend{}\n"
+                        "    \n"
+                        "\\end{axis}\n"
+                        "\\end{tikzpicture}\n"
+                        "\\end{scaletikzpicturetowidth}"
+                        "\\end{center}\n\n");
     }
 
     void rawWrite(FILE *output, const char *content) {

@@ -1,15 +1,27 @@
 digraph expr{
-node0x7fb73dc06bd0[label="+" shape=invhouse fillcolor=aliceblue style=filled]
-node0x7fb73dc06bd0->node0x7fb73dc06b70
-node0x7fb73dc06b70[label="-" shape=invhouse fillcolor=aliceblue style=filled]
-node0x7fb73dc06b70->node0x7fb73dc06450
-node0x7fb73dc06450[label="*" shape=invhouse fillcolor=aliceblue style=filled]
-node0x7fb73dc06450->node0x7fb73dc06130
-node0x7fb73dc06130[label="2" fillcolor=lightgreen style=filled]
-node0x7fb73dc06450->node0x7fb73dc06160
-node0x7fb73dc06160[label="x" fillcolor=pink style=filled]
-node0x7fb73dc06b70->node0x7fb73dc06ae0
-node0x7fb73dc06ae0[label="y" fillcolor=pink style=filled]
-node0x7fb73dc06bd0->node0x7fb73dc06ba0
-node0x7fb73dc06ba0[label="1" fillcolor=lightgreen style=filled]
+node0x10084b3c0[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x10084b3c0->node0x10084abe0
+node0x10084abe0[label="1" fillcolor=lightgreen style=filled]
+node0x10084b3c0->node0x10084b350
+node0x10084b350[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x10084b350->node0x10084b040
+node0x10084b040[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x10084b040->node0x10084ac50
+node0x10084ac50[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x10084ac50->node0x10084acc0
+node0x10084acc0[label="x" fillcolor=pink style=filled]
+node0x10084ac50->node0x10084ad30
+node0x10084ad30[label="y" fillcolor=pink style=filled]
+node0x10084b040->node0x10084afd0
+node0x10084afd0[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x10084afd0->node0x10084ada0
+node0x10084ada0[label="-1" fillcolor=lightgreen style=filled]
+node0x10084afd0->node0x10084ae80
+node0x10084ae80[label="sin" shape=invhouse fillcolor=aliceblue style=filled]
+node0x10084ae80->node0x10084ae10
+node0x10084ae10[label="x" fillcolor=pink style=filled]
+node0x10084b350->node0x10084b200
+node0x10084b200[label="cos" shape=invhouse fillcolor=aliceblue style=filled]
+node0x10084b200->node0x10084b270
+node0x10084b270[label="x" fillcolor=pink style=filled]
 }

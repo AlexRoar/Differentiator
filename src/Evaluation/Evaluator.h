@@ -14,8 +14,8 @@
 #include "Derivation/DerivativeRule.h"
 #include "Evaluation/EvaluatorRes.h"
 
-#define EVAL_L eval(head->getLeft(), evalMath)
-#define EVAL_R eval(head->getRight(), evalMath)
+#define EVAL_L eval(head->getLeft(), evalMath, evalVar, vars)
+#define EVAL_R eval(head->getRight(), evalMath, evalVar, vars)
 
 #define CONV_MATH(expr) (floor(expr) == expr || evalMath)? \
                                     EvaluatorRes {EV_OK, expr} :            \
@@ -42,11 +42,11 @@ namespace Evaluator {
 
         EvaluatorRes evalR = EVAL_R;
         auto evalL = EvaluatorRes {EV_ERR, 0};
-        if (head->getVal().getOperator().getArgsCount() == 2)
+        if (head->getVal().getOperator().getArgsCount() == 2) {
             evalL = EVAL_L;
-
-        if (evalL.status != EV_OK)
-            return evalL;
+            if (evalL.status != EV_OK)
+                return evalL;
+        }
 
         if (evalR.status != EV_OK)
             return evalR;

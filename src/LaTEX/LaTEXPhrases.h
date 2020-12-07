@@ -133,6 +133,9 @@ public:
         freeIfAlocated(primaryDiffEnd);
         freeIfAlocated(secondSimplify);
         freeIfAlocated(secondSimplifyEnd);
+        freeIfAlocated(fullDerivative);
+        freeIfAlocated(fullDerivativeResult);
+        freeIfAlocated(fullDerivativeSimplify);
     }
 
     static char *readFile(const char* name) {

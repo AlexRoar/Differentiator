@@ -102,23 +102,25 @@ namespace InfixParser {
                     } else if (currentToken.getOperator().getCode() == OP_RPA) {
                         if (operatorStack.getSize() == 0)
                             return nullptr;
-                        while (operatorStack.top().getOperator().getCode() != OP_LPA) {
+                        while (operatorStack.top()->getOperator().getCode() != OP_LPA) {
                             ExprNode popped = operatorStack.pop();
                             outputList.pushBack(popped);
                             if (operatorStack.getSize() == 0)
                                 return nullptr;
                         }
                         operatorStack.pop();
-                        if (operatorStack.top().getOperator().getOpType() == OP_T_FUNC) {
-                            ExprNode popped = operatorStack.pop();
-                            outputList.pushBack(popped);
+                        if (!operatorStack.isEmpty()) {
+                            if (operatorStack.top()->getOperator().getOpType() == OP_T_FUNC) {
+                                ExprNode popped = operatorStack.pop();
+                                outputList.pushBack(popped);
+                            }
                         }
                     } else {
                         if (operatorStack.getSize() != 0) {
-                            while (operatorStack.top().getOperator().getCode() != OP_LPA &&
-                                   operatorStack.top().getOperator() >
+                            while (operatorStack.top()->getOperator().getCode() != OP_LPA &&
+                                   operatorStack.top()->getOperator() >
                                    currentToken.getOperator() ||
-                                   (operatorStack.top().getOperator().getPrecedence() ==
+                                   (operatorStack.top()->getOperator().getPrecedence() ==
                                     currentToken.getOperator().getPrecedence() &&
                                     currentToken.getOperator().getAssoc() == ASSOC_LEFT)) {
                                 ExprNode popped = operatorStack.pop();
@@ -165,6 +167,7 @@ namespace InfixParser {
             converter.push(newNode);
         }
 
+        outputList.DestructList();
         BinaryTree<ExprNode> *root = converter.pop();
         converter.dTor();
         return root;
