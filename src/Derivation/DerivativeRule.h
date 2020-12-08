@@ -45,9 +45,7 @@ struct DerivativeRule {
                             dR)
             ));
 #define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE: LA_DUMPED(derivative);
-
-#include <Syntax/Syntax.h>
-
+#include "Syntax/Syntax.h"
 #undef DEF_FUNC
             default: {
                 printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__);

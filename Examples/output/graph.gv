@@ -1,27 +1,75 @@
 digraph expr{
-node0x10084b3c0[label="+" shape=invhouse fillcolor=aliceblue style=filled]
-node0x10084b3c0->node0x10084abe0
-node0x10084abe0[label="1" fillcolor=lightgreen style=filled]
-node0x10084b3c0->node0x10084b350
-node0x10084b350[label="+" shape=invhouse fillcolor=aliceblue style=filled]
-node0x10084b350->node0x10084b040
-node0x10084b040[label="*" shape=invhouse fillcolor=aliceblue style=filled]
-node0x10084b040->node0x10084ac50
-node0x10084ac50[label="+" shape=invhouse fillcolor=aliceblue style=filled]
-node0x10084ac50->node0x10084acc0
-node0x10084acc0[label="x" fillcolor=pink style=filled]
-node0x10084ac50->node0x10084ad30
-node0x10084ad30[label="y" fillcolor=pink style=filled]
-node0x10084b040->node0x10084afd0
-node0x10084afd0[label="*" shape=invhouse fillcolor=aliceblue style=filled]
-node0x10084afd0->node0x10084ada0
-node0x10084ada0[label="-1" fillcolor=lightgreen style=filled]
-node0x10084afd0->node0x10084ae80
-node0x10084ae80[label="sin" shape=invhouse fillcolor=aliceblue style=filled]
-node0x10084ae80->node0x10084ae10
-node0x10084ae10[label="x" fillcolor=pink style=filled]
-node0x10084b350->node0x10084b200
-node0x10084b200[label="cos" shape=invhouse fillcolor=aliceblue style=filled]
-node0x10084b200->node0x10084b270
-node0x10084b270[label="x" fillcolor=pink style=filled]
+node0x7fba20704cb0[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704cb0->node0x7fba20704770
+node0x7fba20704770[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704770->node0x7fba20704080
+node0x7fba20704080[label="1" fillcolor=lightgreen style=filled]
+node0x7fba20704770->node0x7fba20704740
+node0x7fba20704740[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704740->node0x7fba207042c0
+node0x7fba207042c0[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba207042c0->node0x7fba207040b0
+node0x7fba207040b0[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba207040b0->node0x7fba207040e0
+node0x7fba207040e0[label="^" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba207040e0->node0x7fba20704110
+node0x7fba20704110[label="x" fillcolor=pink style=filled]
+node0x7fba207040e0->node0x7fba20704140
+node0x7fba20704140[label="2" fillcolor=lightgreen style=filled]
+node0x7fba207040b0->node0x7fba20704170
+node0x7fba20704170[label="y" fillcolor=pink style=filled]
+node0x7fba207042c0->node0x7fba20704290
+node0x7fba20704290[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704290->node0x7fba207041a0
+node0x7fba207041a0[label="-1" fillcolor=lightgreen style=filled]
+node0x7fba20704290->node0x7fba20704200
+node0x7fba20704200[label="sin" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704200->node0x7fba207041d0
+node0x7fba207041d0[label="x" fillcolor=pink style=filled]
+node0x7fba20704740->node0x7fba20704710
+node0x7fba20704710[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704710->node0x7fba20704410
+node0x7fba20704410[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704410->node0x7fba207042f0
+node0x7fba207042f0[label="2" fillcolor=lightgreen style=filled]
+node0x7fba20704410->node0x7fba20704320
+node0x7fba20704320[label="x" fillcolor=pink style=filled]
+node0x7fba20704710->node0x7fba207046b0
+node0x7fba207046b0[label="cos" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba207046b0->node0x7fba207046e0
+node0x7fba207046e0[label="x" fillcolor=pink style=filled]
+node0x7fba20704cb0->node0x7fba20704c80
+node0x7fba20704c80[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704c80->node0x7fba20704ad0
+node0x7fba20704ad0[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704ad0->node0x7fba207047a0
+node0x7fba207047a0[label="x" fillcolor=pink style=filled]
+node0x7fba20704ad0->node0x7fba20704aa0
+node0x7fba20704aa0[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704aa0->node0x7fba207048c0
+node0x7fba207048c0[label="cos" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba207048c0->node0x7fba207047d0
+node0x7fba207047d0[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba207047d0->node0x7fba20704800
+node0x7fba20704800[label="y" fillcolor=pink style=filled]
+node0x7fba207047d0->node0x7fba20704830
+node0x7fba20704830[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704830->node0x7fba20704860
+node0x7fba20704860[label="14" fillcolor=lightgreen style=filled]
+node0x7fba20704830->node0x7fba20704890
+node0x7fba20704890[label="x" fillcolor=pink style=filled]
+node0x7fba20704aa0->node0x7fba20704980
+node0x7fba20704980[label="14" fillcolor=lightgreen style=filled]
+node0x7fba20704c80->node0x7fba20704b30
+node0x7fba20704b30[label="sin" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704b30->node0x7fba20704b60
+node0x7fba20704b60[label="+" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704b60->node0x7fba20704b90
+node0x7fba20704b90[label="y" fillcolor=pink style=filled]
+node0x7fba20704b60->node0x7fba20704bc0
+node0x7fba20704bc0[label="*" shape=invhouse fillcolor=aliceblue style=filled]
+node0x7fba20704bc0->node0x7fba20704bf0
+node0x7fba20704bf0[label="14" fillcolor=lightgreen style=filled]
+node0x7fba20704bc0->node0x7fba20704c20
+node0x7fba20704c20[label="x" fillcolor=pink style=filled]
 }

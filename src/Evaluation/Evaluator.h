@@ -63,7 +63,7 @@ namespace Evaluator {
             case OP_POW:
                 return funcProcess(pow(evalL.res, evalR.res), evalMath);
 #define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE: return funcProcess(eval, evalMath);
-#include <Syntax/Syntax.h>
+#include "Syntax/Syntax.h"
 #undef DEF_FUNC
             default: {
                 printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__);

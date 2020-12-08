@@ -99,7 +99,7 @@ namespace Differentiator {
         }
     }
 
-    void ArticleGenerator(FILE *output, char *content) {
+    bool ArticleGenerator(FILE *output, char *content) {
         LaTEXDumper::dumpDocStart(output);
 
         ClassicStack<ExprNode>* tokens = nullptr;
@@ -107,7 +107,7 @@ namespace Differentiator {
         auto* initialGraph = graph;
         if (graph == nullptr) {
             printf("Invalid expression!\n");
-            return;
+            return false;
         }
 
         /*
@@ -149,6 +149,7 @@ namespace Differentiator {
          */
         LaTEXDumper::rawWrite(output, LaTEXPhrases::getPrimaryDiffEnd());
         LaTEXDumper::dumpDiffResult(output, content, derived);
+        LaTEXDumper::rawWrite(output, LaTEXPhrases::getSecondSimplify());
         // ==============================================================
 
         /*
@@ -162,7 +163,7 @@ namespace Differentiator {
         /*
          * Partial derivative by x simplified dump
          */
-        LaTEXDumper::rawWrite(output, LaTEXPhrases::getSecondSimplify());
+
         LaTEXDumper::rawWrite(output, LaTEXPhrases::getSecondSimplifyEnd());
         LaTEXDumper::dumpDiffResult(output, content, derived);
         LaTEXDumper::dumpGraph(output, derived);
@@ -201,6 +202,8 @@ namespace Differentiator {
         dumpFullDerivative(output, vars, partialDerivativesSimplified);
         dumpGraphFullDerivative(output, vars, partialDerivativesSimplified);
         deleteFullDerivative(partialDerivativesSimplified, varNum);
+
+        LaTEXDumper::rawWrite(output, LaTEXPhrases::getConclusion());
         // ==============================================================
         // ==============================================================
 
@@ -212,6 +215,7 @@ namespace Differentiator {
         BinaryTree<ExprNode>::Delete(derived);
         LaTEXDumper::dumpDocEnd(output);
         LaTEXPhrases::freeSpace();
+        return true;
     }
 };
 

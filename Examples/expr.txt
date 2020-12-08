@@ -1,1 +1,1 @@
-x + (x + y) * cos(x) + sin(y)
+x + (x * x + y) * cos(x) + x * sin(y + (2 + 12) * x)

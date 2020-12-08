@@ -11,21 +11,26 @@ int main() {
     char *fileName = static_cast<char *>(calloc(maxFNameLen, sizeof(char)));
     scanf("%s", fileName);
 
-    if (fileName[0] == 'y' && fileName[1] == '\0'){
+    if (fileName[0] == 'y' && fileName[1] == '\0')
         strcpy(fileName, "expr.txt");
-    }
 
     char *expression = LaTEXPhrases::readFile(fileName);
+
     if (expression == nullptr)
         return EXIT_FAILURE;
 
-    free(fileName);
 
-    Differentiator::ArticleGenerator(file, expression);
+    bool result = Differentiator::ArticleGenerator(file, expression);
 
     fclose(file);
     free(expression);
+    free(fileName);
 
-    system("pdflatex -output-directory output/ -output-format=pdf output/latex.tex");
+    if (result)
+        system("pdflatex -output-directory output/ -output-format=pdf output/latex.tex");
+    else {
+        printf("Error processing input!\n");
+        return EXIT_FAILURE;
+    }
     return 0;
 }

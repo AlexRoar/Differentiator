@@ -20,7 +20,7 @@ enum ExprOperatorCode {
     OP_MUL  ,
     OP_POW  ,
 #define DEF_FUNC(OP_CODE, string, latex, eval, derivative) OP_CODE ,
-#include <Syntax/Syntax.h>
+#include "Syntax/Syntax.h"
 #undef DEF_FUNC
     OP_LPA  ,
     OP_RPA  ,
@@ -84,7 +84,7 @@ public:
                 break;
             }
 #define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE:
-#include <Syntax/Syntax.h>
+#include "Syntax/Syntax.h"
 #undef DEF_FUNC
             {
                 assoc = ASSOC_NONE;
@@ -143,7 +143,7 @@ public:
             case OP_POW:
                 return "^";
 #define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE: return #string ;
-#include <Syntax/Syntax.h>
+#include "Syntax/Syntax.h"
 #undef DEF_FUNC
             case OP_RPA:
                 return "(";

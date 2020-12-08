@@ -87,7 +87,7 @@ namespace LaTEXDumper {
                 fprintf(output, "}");                                                                         \
                 break;                                                                                        \
 }
-#include <Syntax/Syntax.h>
+#include "Syntax/Syntax.h"
 #undef DEF_FUNC
             default: {
                 printf("Reached prohibited operation in %s: %s\n", __FILE__, __PRETTY_FUNCTION__);

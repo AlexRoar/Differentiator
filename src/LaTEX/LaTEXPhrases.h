@@ -19,6 +19,12 @@ public:
         return intro;
     }
 
+    static const char* getConclusion() {
+        if (conclusion == nullptr)
+            conclusion = readFile("files/conclusion.txt");
+        return conclusion;
+    }
+
     static const char* getPrimarySimplify() {
         if (primarySimplify == nullptr)
             primarySimplify = readFile("files/primarySimplify.txt");
@@ -136,6 +142,7 @@ public:
         freeIfAlocated(fullDerivative);
         freeIfAlocated(fullDerivativeResult);
         freeIfAlocated(fullDerivativeSimplify);
+        freeIfAlocated(conclusion);
     }
 
     static char *readFile(const char* name) {
@@ -172,6 +179,7 @@ private:
     static char* fullDerivative;
     static char* fullDerivativeResult;
     static char* fullDerivativeSimplify;
+    static char* conclusion;
 };
 
 char* LaTEXPhrases::docStart              = nullptr;
@@ -184,6 +192,7 @@ char* LaTEXPhrases::secondSimplify        = nullptr;
 char* LaTEXPhrases::secondSimplifyEnd     = nullptr;
 char* LaTEXPhrases::fullDerivative        = nullptr;
 char* LaTEXPhrases::fullDerivativeResult  = nullptr;
+char* LaTEXPhrases::conclusion            = nullptr;
 char* LaTEXPhrases::fullDerivativeSimplify  = nullptr;
 
 #endif //DIFFERENTIATOR_LATEXPHRASES_H

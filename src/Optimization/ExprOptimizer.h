@@ -64,7 +64,7 @@ class ExprOptimizer {
             case OP_MUL: LA_DUMPED (changed += SpecificOptimizers::mulOptimizer(head, evalL, evalR, evalMath););
             case OP_POW: LA_DUMPED (changed += SpecificOptimizers::expOptimizer(head, evalL, evalR, evalMath););
 #define DEF_FUNC(OP_CODE, string, latex, eval, derivative) case OP_CODE:
-#include <Syntax/Syntax.h>
+#include "Syntax/Syntax.h"
 #undef DEF_FUNC
             {
                 break;
